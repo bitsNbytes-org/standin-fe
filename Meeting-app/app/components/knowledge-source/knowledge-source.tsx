@@ -280,16 +280,18 @@ const KnowledgeSource = ({ projectId }: { projectId?: number }) => {
                 onChange={(e) => setNewLinkUrl(e.target.value)}
               />
             </div>
-            <Button
-              type="button"
-              onClick={addKnowledgeLink}
-              disabled={!newLinkUrl.trim()}
-              className="w-full"
-              variant="outline"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add Link
-            </Button>
+            {projectId && (
+              <Button
+                type="button"
+                onClick={addKnowledgeLink}
+                disabled={!newLinkUrl.trim()}
+                className="w-full"
+                variant="outline"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Link
+              </Button>
+            )}
           </div>
         </TabsContent>
 
@@ -305,16 +307,18 @@ const KnowledgeSource = ({ projectId }: { projectId?: number }) => {
                 className="min-h-[120px]"
               />
             </div>
-            <Button
-              type="button"
-              onClick={addKnowledgeContent}
-              disabled={!newContentText.trim()}
-              className="w-full"
-              variant="outline"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add Content
-            </Button>
+            {projectId && (
+              <Button
+                type="button"
+                onClick={addKnowledgeContent}
+                disabled={!newContentText.trim()}
+                className="w-full"
+                variant="outline"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Content
+              </Button>
+            )}
           </div>
         </TabsContent>
 
@@ -344,16 +348,18 @@ const KnowledgeSource = ({ projectId }: { projectId?: number }) => {
                 </div>
               </div>
             )}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={addKnowledgeFile}
-              disabled={!selectedFile}
-              className="w-full"
-            >
-              <Upload className="mr-2 h-4 w-4" />
-              Upload File
-            </Button>
+            {projectId && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addKnowledgeFile}
+                disabled={!selectedFile}
+                className="w-full"
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                Upload File
+              </Button>
+            )}
           </div>
         </TabsContent>
       </Tabs>

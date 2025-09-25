@@ -35,6 +35,35 @@ import {
 } from '@/components/ui/select';
 import { BASE_URL } from '@/lib/utils';
 
+const attendees = [
+  { name: 'Rose Joseph', email: 'rose.j@keyvalue.systems' },
+  { name: 'Emma Johnson', email: 'emma.johnson@example.com' },
+  { name: 'Michael Chen', email: 'michael.chen@example.com' },
+  { name: 'Sarah Williams', email: 'sarah.williams@example.com' },
+  { name: 'David Brown', email: 'david.brown@example.com' },
+  { name: 'Lisa Davis', email: 'lisa.davis@example.com' },
+];
+
+const timeSlots = [
+  '09:00 AM',
+  '09:30 AM',
+  '10:00 AM',
+  '10:30 AM',
+  '11:00 AM',
+  '11:30 AM',
+  '12:00 PM',
+  '12:30 PM',
+  '01:00 PM',
+  '01:30 PM',
+  '02:00 PM',
+  '02:30 PM',
+  '03:00 PM',
+  '03:30 PM',
+  '04:00 PM',
+  '04:30 PM',
+  '05:00 PM',
+  '05:30 PM',
+];
 interface KnowledgeSource {
   id: string;
   type: 'link' | 'content' | 'file';
@@ -56,14 +85,9 @@ export default function ScheduleMeeting() {
   const [selectedAttendee, setSelectedAttendee] = useState('');
   const [knowledgeSources, setKnowledgeSources] = useState<KnowledgeSource[]>([]);
 
-  useEffect(() => {
-    console.log('selectedProject', selectedProject, typeof selectedProject);
-  }, [selectedProject]);
-
   // Form states for adding new knowledge sources
   const [newLinkUrl, setNewLinkUrl] = useState('');
   const [newLinkTitle, setNewLinkTitle] = useState('');
-  const [newContentTitle, setNewContentTitle] = useState('');
   const [newContentText, setNewContentText] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -78,215 +102,51 @@ export default function ScheduleMeeting() {
     fetchProjects();
   }, []);
 
-  const attendees = [
-    'John Smith - New Developer',
-    'Emma Johnson - Frontend Dev',
-    'Michael Chen - Backend Dev',
-    'Sarah Williams - Designer',
-    'David Brown - QA Engineer',
-    'Lisa Davis - Product Manager',
-  ];
-
-  const timeSlots = [
-    '09:00 AM',
-    '09:30 AM',
-    '10:00 AM',
-    '10:30 AM',
-    '11:00 AM',
-    '11:30 AM',
-    '12:00 PM',
-    '12:30 PM',
-    '01:00 PM',
-    '01:30 PM',
-    '02:00 PM',
-    '02:30 PM',
-    '03:00 PM',
-    '03:30 PM',
-    '04:00 PM',
-    '04:30 PM',
-    '05:00 PM',
-    '05:30 PM',
-  ];
-
-  // API call functions
-  const addKnowledgeLink = async () => {
-    if (!newLinkUrl.trim() || !newLinkTitle.trim()) return;
-
-    const newSource: KnowledgeSource = {
-      id: Date.now().toString(),
-      type: 'link',
-      title: newLinkTitle,
-      content: newLinkUrl,
-      status: 'loading',
-      url: newLinkUrl,
-    };
-
-    setKnowledgeSources((prev) => [...prev, newSource]);
-
-    try {
-      // Mock API call - replace with actual API endpoint
-      const response = await fetch('/api/knowledge-sources', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'link',
-          title: newLinkTitle,
-          url: newLinkUrl,
-          projectId: selectedProject,
-        }),
-      });
-
-      if (!response.ok) throw new Error('Failed to add link');
-
-      setKnowledgeSources((prev) =>
-        prev.map((source) =>
-          source.id === newSource.id ? { ...source, status: 'success' } : source
-        )
-      );
-
-      setNewLinkUrl('');
-      setNewLinkTitle('');
-    } catch (error) {
-      setKnowledgeSources((prev) =>
-        prev.map((source) =>
-          source.id === newSource.id
-            ? { ...source, status: 'error', errorMessage: 'Failed to add link' }
-            : source
-        )
-      );
-    }
-  };
-
-  const addKnowledgeContent = async () => {
-    if (!newContentTitle.trim() || !newContentText.trim()) return;
-
-    const newSource: KnowledgeSource = {
-      id: Date.now().toString(),
-      type: 'content',
-      title: newContentTitle,
-      content: newContentText,
-      status: 'loading',
-    };
-
-    setKnowledgeSources((prev) => [...prev, newSource]);
-
-    try {
-      // Mock API call - replace with actual API endpoint
-      const response = await fetch('/api/knowledge-sources', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'content',
-          title: newContentTitle,
-          content: newContentText,
-          projectId: selectedProject,
-        }),
-      });
-
-      if (!response.ok) throw new Error('Failed to add content');
-
-      setKnowledgeSources((prev) =>
-        prev.map((source) =>
-          source.id === newSource.id ? { ...source, status: 'success' } : source
-        )
-      );
-
-      setNewContentTitle('');
-      setNewContentText('');
-    } catch (error) {
-      setKnowledgeSources((prev) =>
-        prev.map((source) =>
-          source.id === newSource.id
-            ? { ...source, status: 'error', errorMessage: 'Failed to add content' }
-            : source
-        )
-      );
-    }
-  };
-
-  const addKnowledgeFile = async () => {
-    if (!selectedFile) return;
-
-    const newSource: KnowledgeSource = {
-      id: Date.now().toString(),
-      type: 'file',
-      title: selectedFile.name,
-      content: selectedFile.name,
-      status: 'loading',
-      fileName: selectedFile.name,
-      fileSize: selectedFile.size,
-    };
-
-    setKnowledgeSources((prev) => [...prev, newSource]);
-
-    try {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      formData.append('type', 'file');
-      formData.append('projectId', selectedProject);
-
-      // Mock API call - replace with actual API endpoint
-      const response = await fetch('/api/knowledge-sources/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error('Failed to upload file');
-
-      setKnowledgeSources((prev) =>
-        prev.map((source) =>
-          source.id === newSource.id ? { ...source, status: 'success' } : source
-        )
-      );
-
-      setSelectedFile(null);
-      const fileInput = document.getElementById('file-input') as HTMLInputElement;
-      if (fileInput) fileInput.value = '';
-    } catch (error) {
-      setKnowledgeSources((prev) =>
-        prev.map((source) =>
-          source.id === newSource.id
-            ? { ...source, status: 'error', errorMessage: 'Failed to upload file' }
-            : source
-        )
-      );
-    }
-  };
-
-  const removeKnowledgeSource = (id: string) => {
-    setKnowledgeSources((prev) => prev.filter((source) => source.id !== id));
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-    }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Meeting scheduled:', {
-      title: meetingTitle,
-      project: selectedProject,
-      attendee: selectedAttendee,
-      date: selectedDate,
-      time: selectedTime,
-      knowledgeSources: knowledgeSources.filter((source) => source.status === 'success'),
+
+    // Create proper ISO datetime strings
+    const createDateTime = (date: Date, time: string): string => {
+      const [hours, minutes] = time.split(':');
+      const [timePeriod] = time.split(' ').slice(-1);
+      let hour24 = parseInt(hours, 10);
+
+      if (timePeriod === 'PM' && hour24 !== 12) {
+        hour24 += 12;
+      } else if (timePeriod === 'AM' && hour24 === 12) {
+        hour24 = 0;
+      }
+
+      const dateTime = new Date(date);
+      dateTime.setHours(hour24, parseInt(minutes, 10), 0, 0);
+      return dateTime.toISOString();
+    };
+
+    const startDateTime = createDateTime(selectedDate!, selectedTime);
+
+    // Calculate end time as 30 minutes after start time
+    const startDateObj = new Date(startDateTime);
+    const endDateObj = new Date(startDateObj.getTime() + 30 * 60 * 1000); // Add 30 minutes
+    const endDateTime = endDateObj.toISOString();
+
+    const formData = new FormData();
+    formData.append('title', meetingTitle);
+    formData.append('project_id', selectedProject);
+    formData.append('start_time', startDateTime);
+    formData.append('end_time', endDateTime);
+    formData.append('attendees', [selectedAttendee]);
+
+    const response = await fetch(`${BASE_URL}/meeting/schedule`, {
+      method: 'POST',
+      body: formData,
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('API Error:', errorData);
+      throw new Error('Failed to schedule meeting');
+    }
+
     router.push('dashboard');
   };
 
@@ -332,7 +192,7 @@ export default function ScheduleMeeting() {
                   <div className="space-y-2">
                     <Label>Project</Label>
                     <Select
-                      value={selectedProject.toString()}
+                      value={selectedProject?.toString()}
                       onValueChange={setSelectedProject}
                       required
                     >
@@ -357,8 +217,8 @@ export default function ScheduleMeeting() {
                       </SelectTrigger>
                       <SelectContent className="w-full">
                         {attendees.map((attendee) => (
-                          <SelectItem key={attendee} value={attendee}>
-                            {attendee}
+                          <SelectItem key={attendee.email} value={attendee.email}>
+                            {attendee.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
