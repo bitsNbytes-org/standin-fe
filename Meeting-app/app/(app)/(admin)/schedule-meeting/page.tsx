@@ -7,11 +7,16 @@ import {
   ArrowLeft,
   Bot,
   Calendar as CalendarIcon,
+  CheckCircle,
   Clock,
+  ExternalLink,
   FileText,
-  Link,
+  Link2,
+  Loader2,
   Plus,
+  Upload,
   X,
+  XCircle,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -27,17 +32,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
-export default function ScheduleMeetingPage() {
+interface KnowledgeSource {
+  id: string;
+  type: 'link' | 'content' | 'file';
+  title: string;
+  content: string;
+  status: 'idle' | 'loading' | 'success' | 'error';
+  errorMessage?: string;
+  url?: string;
+  fileName?: string;
+  fileSize?: number;
+}
+
+export function ScheduleMeeting() {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState('');
   const [meetingTitle, setMeetingTitle] = useState('');
   const [selectedProject, setSelectedProject] = useState('');
   const [selectedAttendee, setSelectedAttendee] = useState('');
-  const [knowledgeLinks, setKnowledgeLinks] = useState<string[]>(['']);
-  const [knowledgeText, setKnowledgeText] = useState('');
+  const [knowledgeSources, setKnowledgeSources] = useState<KnowledgeSource[]>([]);
+
+  // Form states for adding new knowledge sources
+  const [newLinkUrl, setNewLinkUrl] = useState('');
+  const [newLinkTitle, setNewLinkTitle] = useState('');
+  const [newContentTitle, setNewContentTitle] = useState('');
+  const [newContentText, setNewContentText] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const projects = [
     'HR Onboarding Program',
@@ -78,18 +102,172 @@ export default function ScheduleMeetingPage() {
     '05:30 PM',
   ];
 
-  const addKnowledgeLink = () => {
-    setKnowledgeLinks([...knowledgeLinks, '']);
+  // API call functions
+  const addKnowledgeLink = async () => {
+    if (!newLinkUrl.trim() || !newLinkTitle.trim()) return;
+
+    const newSource: KnowledgeSource = {
+      id: Date.now().toString(),
+      type: 'link',
+      title: newLinkTitle,
+      content: newLinkUrl,
+      status: 'loading',
+      url: newLinkUrl,
+    };
+
+    setKnowledgeSources((prev) => [...prev, newSource]);
+
+    try {
+      // Mock API call - replace with actual API endpoint
+      const response = await fetch('/api/knowledge-sources', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'link',
+          title: newLinkTitle,
+          url: newLinkUrl,
+          projectId: selectedProject,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to add link');
+
+      setKnowledgeSources((prev) =>
+        prev.map((source) =>
+          source.id === newSource.id ? { ...source, status: 'success' } : source
+        )
+      );
+
+      setNewLinkUrl('');
+      setNewLinkTitle('');
+    } catch (error) {
+      setKnowledgeSources((prev) =>
+        prev.map((source) =>
+          source.id === newSource.id
+            ? { ...source, status: 'error', errorMessage: 'Failed to add link' }
+            : source
+        )
+      );
+    }
   };
 
-  const updateKnowledgeLink = (index: number, value: string) => {
-    const updated = [...knowledgeLinks];
-    updated[index] = value;
-    setKnowledgeLinks(updated);
+  const addKnowledgeContent = async () => {
+    if (!newContentTitle.trim() || !newContentText.trim()) return;
+
+    const newSource: KnowledgeSource = {
+      id: Date.now().toString(),
+      type: 'content',
+      title: newContentTitle,
+      content: newContentText,
+      status: 'loading',
+    };
+
+    setKnowledgeSources((prev) => [...prev, newSource]);
+
+    try {
+      // Mock API call - replace with actual API endpoint
+      const response = await fetch('/api/knowledge-sources', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'content',
+          title: newContentTitle,
+          content: newContentText,
+          projectId: selectedProject,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to add content');
+
+      setKnowledgeSources((prev) =>
+        prev.map((source) =>
+          source.id === newSource.id ? { ...source, status: 'success' } : source
+        )
+      );
+
+      setNewContentTitle('');
+      setNewContentText('');
+    } catch (error) {
+      setKnowledgeSources((prev) =>
+        prev.map((source) =>
+          source.id === newSource.id
+            ? { ...source, status: 'error', errorMessage: 'Failed to add content' }
+            : source
+        )
+      );
+    }
   };
 
-  const removeKnowledgeLink = (index: number) => {
-    setKnowledgeLinks(knowledgeLinks.filter((_, i) => i !== index));
+  const addKnowledgeFile = async () => {
+    if (!selectedFile) return;
+
+    const newSource: KnowledgeSource = {
+      id: Date.now().toString(),
+      type: 'file',
+      title: selectedFile.name,
+      content: selectedFile.name,
+      status: 'loading',
+      fileName: selectedFile.name,
+      fileSize: selectedFile.size,
+    };
+
+    setKnowledgeSources((prev) => [...prev, newSource]);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('type', 'file');
+      formData.append('projectId', selectedProject);
+
+      // Mock API call - replace with actual API endpoint
+      const response = await fetch('/api/knowledge-sources/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Failed to upload file');
+
+      setKnowledgeSources((prev) =>
+        prev.map((source) =>
+          source.id === newSource.id ? { ...source, status: 'success' } : source
+        )
+      );
+
+      setSelectedFile(null);
+      const fileInput = document.getElementById('file-input') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+    } catch (error) {
+      setKnowledgeSources((prev) =>
+        prev.map((source) =>
+          source.id === newSource.id
+            ? { ...source, status: 'error', errorMessage: 'Failed to upload file' }
+            : source
+        )
+      );
+    }
+  };
+
+  const removeKnowledgeSource = (id: string) => {
+    setKnowledgeSources((prev) => prev.filter((source) => source.id !== id));
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -101,8 +279,7 @@ export default function ScheduleMeetingPage() {
       attendee: selectedAttendee,
       date: selectedDate,
       time: selectedTime,
-      knowledgeLinks: knowledgeLinks.filter((link) => link.trim()),
-      knowledgeText,
+      knowledgeSources: knowledgeSources.filter((source) => source.status === 'success'),
     });
     router.push('dashboard');
   };
@@ -228,60 +405,197 @@ export default function ScheduleMeetingPage() {
                   <span>Knowledge Sources</span>
                 </CardTitle>
                 <CardDescription>
-                  Provide information for the AI to reference during the session
+                  Add links, content, or files for the AI to reference during the session
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Knowledge Links */}
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <Link className="text-muted-foreground h-4 w-4" />
-                    <Label>Documentation Links</Label>
-                  </div>
-                  {knowledgeLinks.map((link, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <Input
-                        placeholder="https://docs.example.com/guide"
-                        value={link}
-                        onChange={(e) => updateKnowledgeLink(index, e.target.value)}
-                        className="flex-1"
-                      />
-                      {knowledgeLinks.length > 1 && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeKnowledgeLink(index)}
-                          className="p-2"
+              <CardContent className="space-y-6">
+                {/* Added Knowledge Sources */}
+                {knowledgeSources.length > 0 && (
+                  <div className="space-y-3">
+                    <Label>Added Sources</Label>
+                    <div className="space-y-2">
+                      {knowledgeSources.map((source) => (
+                        <div
+                          key={source.id}
+                          className="flex items-center justify-between rounded-lg border p-3"
                         >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addKnowledgeLink}
-                    className="w-full"
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Link
-                  </Button>
-                </div>
+                          <div className="flex flex-1 items-center space-x-3">
+                            {source.type === 'link' && <Link2 className="h-4 w-4 text-blue-500" />}
+                            {source.type === 'content' && (
+                              <FileText className="h-4 w-4 text-green-500" />
+                            )}
+                            {source.type === 'file' && (
+                              <Upload className="h-4 w-4 text-purple-500" />
+                            )}
 
-                {/* Knowledge Text */}
-                <div className="space-y-2">
-                  <Label htmlFor="knowledge-text">Additional Information</Label>
-                  <Textarea
-                    id="knowledge-text"
-                    placeholder="Paste any relevant text, guidelines, or instructions that the AI should reference..."
-                    value={knowledgeText}
-                    onChange={(e) => setKnowledgeText(e.target.value)}
-                    className="min-h-[120px]"
-                  />
-                </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-sm font-medium">{source.title}</p>
+                              {source.type === 'link' && (
+                                <p className="text-muted-foreground truncate text-xs">
+                                  {source.url}
+                                </p>
+                              )}
+                              {source.type === 'file' && source.fileSize && (
+                                <p className="text-muted-foreground text-xs">
+                                  {formatFileSize(source.fileSize)}
+                                </p>
+                              )}
+                              {source.type === 'content' && (
+                                <p className="text-muted-foreground truncate text-xs">
+                                  {source.content.substring(0, 50)}...
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="flex items-center space-x-2">
+                              {source.status === 'loading' && (
+                                <Loader2 className="text-muted-foreground h-4 w-4 animate-spin" />
+                              )}
+                              {source.status === 'success' && (
+                                <CheckCircle className="h-4 w-4 text-green-500" />
+                              )}
+                              {source.status === 'error' && (
+                                <XCircle className="h-4 w-4 text-red-500" />
+                              )}
+
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeKnowledgeSource(source.id)}
+                                className="p-1"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Add New Knowledge Sources */}
+                <Tabs defaultValue="link" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="link" className="flex items-center space-x-2">
+                      <Link2 className="h-4 w-4" />
+                      <span>Link</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="content" className="flex items-center space-x-2">
+                      <FileText className="h-4 w-4" />
+                      <span>Content</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="file" className="flex items-center space-x-2">
+                      <Upload className="h-4 w-4" />
+                      <span>File</span>
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="link" className="space-y-4">
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="link-title">Link Title</Label>
+                        <Input
+                          id="link-title"
+                          placeholder="e.g., API Documentation"
+                          value={newLinkTitle}
+                          onChange={(e) => setNewLinkTitle(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="link-url">URL</Label>
+                        <Input
+                          id="link-url"
+                          placeholder="https://docs.example.com/guide"
+                          type="url"
+                          value={newLinkUrl}
+                          onChange={(e) => setNewLinkUrl(e.target.value)}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={addKnowledgeLink}
+                        disabled={!newLinkUrl.trim() || !newLinkTitle.trim()}
+                        className="w-full"
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Link
+                      </Button>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="content" className="space-y-4">
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="content-title">Content Title</Label>
+                        <Input
+                          id="content-title"
+                          placeholder="e.g., Style Guide"
+                          value={newContentTitle}
+                          onChange={(e) => setNewContentTitle(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="content-text">Content</Label>
+                        <Textarea
+                          id="content-text"
+                          placeholder="Paste any relevant text, guidelines, or instructions..."
+                          value={newContentText}
+                          onChange={(e) => setNewContentText(e.target.value)}
+                          className="min-h-[120px]"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={addKnowledgeContent}
+                        disabled={!newContentTitle.trim() || !newContentText.trim()}
+                        className="w-full"
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Content
+                      </Button>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="file" className="space-y-4">
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="file-input">Select File</Label>
+                        <Input
+                          id="file-input"
+                          type="file"
+                          onChange={handleFileSelect}
+                          accept=".pdf,.doc,.docx,.txt,.md,.json,.csv,.xlsx"
+                          className="cursor-pointer"
+                        />
+                        <p className="text-muted-foreground text-xs">
+                          Supported formats: PDF, DOC, DOCX, TXT, MD, JSON, CSV, XLSX
+                        </p>
+                      </div>
+                      {selectedFile && (
+                        <div className="bg-muted/50 rounded-lg border p-3">
+                          <div className="flex items-center space-x-2">
+                            <Upload className="text-muted-foreground h-4 w-4" />
+                            <span className="text-sm font-medium">{selectedFile.name}</span>
+                            <Badge variant="secondary" className="text-xs">
+                              {formatFileSize(selectedFile.size)}
+                            </Badge>
+                          </div>
+                        </div>
+                      )}
+                      <Button
+                        type="button"
+                        onClick={addKnowledgeFile}
+                        disabled={!selectedFile}
+                        className="w-full"
+                      >
+                        <Upload className="mr-2 h-4 w-4" />
+                        Upload File
+                      </Button>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
           </div>
@@ -329,16 +643,35 @@ export default function ScheduleMeetingPage() {
                   </div>
                 )}
 
-                {knowledgeLinks.filter((link) => link.trim()).length > 0 && (
+                {knowledgeSources.filter((source) => source.status === 'success').length > 0 && (
                   <div>
                     <Label className="text-muted-foreground text-xs">KNOWLEDGE SOURCES</Label>
                     <div className="space-y-1">
-                      {knowledgeLinks
-                        .filter((link) => link.trim())
-                        .map((link, index) => (
-                          <Badge key={index} variant="secondary" className="block truncate text-xs">
-                            {link}
-                          </Badge>
+                      {knowledgeSources
+                        .filter((source) => source.status === 'success')
+                        .map((source) => (
+                          <div key={source.id} className="flex items-center space-x-2">
+                            <Badge
+                              variant="secondary"
+                              className="flex items-center space-x-1 text-xs"
+                            >
+                              {source.type === 'link' && <Link2 className="h-3 w-3" />}
+                              {source.type === 'content' && <FileText className="h-3 w-3" />}
+                              {source.type === 'file' && <Upload className="h-3 w-3" />}
+                              <span className="max-w-[150px] truncate">{source.title}</span>
+                            </Badge>
+                            {source.type === 'link' && (
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-0"
+                                onClick={() => window.open(source.url, '_blank')}
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
                         ))}
                     </div>
                   </div>
