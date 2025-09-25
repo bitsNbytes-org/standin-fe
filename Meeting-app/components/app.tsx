@@ -9,6 +9,7 @@ import { SessionView } from '@/components/session-view';
 import { Toaster } from '@/components/ui/sonner';
 import { Welcome } from '@/components/welcome';
 import useConnectionDetails from '@/hooks/useConnectionDetails';
+import useGetMeetingDetails from '@/hooks/useGetMeetingDetails';
 import type { AppConfig } from '@/lib/types';
 
 const MotionWelcome = motion.create(Welcome);
@@ -22,6 +23,8 @@ interface AppProps {
 export function App({ appConfig, userInfo }: AppProps) {
   const room = useMemo(() => new Room(), []);
   const [sessionStarted, setSessionStarted] = useState(false);
+  const { meetingDetails, isLoading } = useGetMeetingDetails({ meetingId: userInfo });
+  // console.log('meetingDetails', meetingDetails);
   const { refreshConnectionDetails, existingOrRefreshConnectionDetails } =
     useConnectionDetails(appConfig);
 
@@ -74,8 +77,6 @@ export function App({ appConfig, userInfo }: AppProps) {
   const { startButtonText } = appConfig;
 
   const handleStartCall = () => {
-    //trigger api and get response
-    console.log('userInfo', userInfo);
     setSessionStarted(true);
   };
 
@@ -89,6 +90,8 @@ export function App({ appConfig, userInfo }: AppProps) {
         initial={{ opacity: 1 }}
         animate={{ opacity: sessionStarted ? 0 : 1 }}
         transition={{ duration: 0.5, ease: 'linear', delay: sessionStarted ? 0 : 0.5 }}
+        meetingDetails={meetingDetails}
+        isLoading={isLoading}
       />
 
       <RoomContext.Provider value={room}>
@@ -107,6 +110,7 @@ export function App({ appConfig, userInfo }: AppProps) {
             ease: 'linear',
             delay: sessionStarted ? 0.5 : 0,
           }}
+          meetingDetails={meetingDetails}
         />
       </RoomContext.Provider>
 

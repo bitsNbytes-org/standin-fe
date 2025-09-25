@@ -1,13 +1,18 @@
 import { MediaTiles } from '@/components/livekit/media-tiles';
+import type { MeetingDetails } from '@/lib/types';
 
-export const MeetingInfo = () => {
-  const meetingInfo = {
-    project: 'React Fundamentals',
-    duration: '30 Minutes',
-    type: 'Training Session',
-    userName: 'Emma Johnson T',
+export const MeetingInfo = ({ meetingDetails }: { meetingDetails: MeetingDetails | null }) => {
+  const calculateDuration = (startTime: string, endTime: string) => {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    const duration = end.getTime() - start.getTime();
+    const minutes = Math.floor(duration / (1000 * 60));
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return `${hours}h ${remainingMinutes}m`;
   };
 
+  if (!meetingDetails) return null;
   return (
     <div className="flex flex-col">
       <p className="p-2 text-sm font-bold text-white">Participants (2)</p>
@@ -22,7 +27,7 @@ export const MeetingInfo = () => {
         <div className="flex flex-col items-center">
           <div className="bg-primary relative my-auto flex size-[100px] items-center justify-center rounded-full">
             <p className="text-5xl font-bold text-black">
-              {meetingInfo.userName
+              {meetingDetails?.attendees[0]
                 .split(' ')
                 .slice(0, 2)
                 .map((name) => name[0])
@@ -30,7 +35,13 @@ export const MeetingInfo = () => {
                 .toUpperCase()}
             </p>
           </div>
-          <p className="p-2 text-center text-lg font-bold text-white">{meetingInfo.userName}</p>
+          <p className="p-2 text-center text-lg font-bold text-white">
+            {meetingDetails?.attendees[0]
+              .split('@')[0]
+              .split('.')
+              .map((name) => name.charAt(0).toUpperCase() + name.slice(1))
+              .join(' ')}
+          </p>
         </div>
       </div>
       <div className="h-[0.1px] w-full bg-gray-500"></div>
@@ -38,15 +49,17 @@ export const MeetingInfo = () => {
         <p className="py-2 text-sm font-bold text-white">Meeting Details</p>
         <div>
           <span className="text-md min-w-20 text-gray-400">Project</span>
-          <span className="text-md ml-4 text-white">: {meetingInfo.project}</span>
+          <span className="text-md ml-4 text-white">: {meetingDetails?.title}</span>
         </div>
         <div>
           <span className="text-md text-gray-400">Duration</span>
-          <span className="text-md ml-[7px] text-white">: {meetingInfo.duration}</span>
+          <span className="text-md ml-[7px] text-white">
+            : {calculateDuration(meetingDetails?.start_time, meetingDetails?.end_time)}
+          </span>
         </div>
         <div>
           <span className="text-md text-gray-400">Type</span>
-          <span className="text-md ml-8 text-white">: {meetingInfo.type}</span>
+          <span className="text-md ml-8 text-white">: {meetingDetails?.description}</span>
         </div>
       </div>
       <div className="mb-4 h-[0.1px] w-full bg-gray-500"></div>

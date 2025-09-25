@@ -5,7 +5,7 @@ import { type AgentState, useRoomContext, useVoiceAssistant } from '@livekit/com
 import { toastAlert } from '@/components/alert-toast';
 import useChatAndTranscription from '@/hooks/useChatAndTranscription';
 import { useDebugMode } from '@/hooks/useDebug';
-import type { AppConfig } from '@/lib/types';
+import type { AppConfig, MeetingDetails } from '@/lib/types';
 import { ChatComponent } from './chat-component';
 import { ChatInput } from './livekit/chat/chat-input';
 import { MeetingController } from './meeting-controler';
@@ -20,6 +20,7 @@ interface SessionViewProps {
   appConfig: AppConfig;
   disabled: boolean;
   sessionStarted: boolean;
+  meetingDetails: MeetingDetails | null;
 }
 
 export const SessionView = ({
@@ -27,6 +28,7 @@ export const SessionView = ({
   disabled,
   sessionStarted,
   ref,
+  meetingDetails,
 }: React.ComponentProps<'div'> & SessionViewProps) => {
   const { state: agentState } = useVoiceAssistant();
 
@@ -85,15 +87,15 @@ export const SessionView = ({
   return (
     <section ref={ref} className="h-screen">
       <div className="bg-card top-0 right-0 left-0 p-8 pl-12">
-        <p className="text-3xl font-bold text-white">React Fundamentals</p>
-        <p className="text-xl text-gray-400">Training Session</p>
+        <p className="text-3xl font-bold text-white">{meetingDetails?.title}</p>
+        <p className="text-xl text-gray-400">{meetingDetails?.description}</p>
       </div>
       <div className="flex h-3/4 gap-10 p-10">
         <div className="bg-grey-950 bg-card h-full w-3/4 rounded-2xl border border-gray-700 p-10">
           <div>{sessionStarted && room && <RenderPresentation />}</div>
         </div>
         <div className="bg-card h-full w-1/4 min-w-[400px] rounded-2xl border border-gray-700 p-2">
-          <MeetingInfo />
+          <MeetingInfo meetingDetails={meetingDetails} />
           <div className="mx-2 h-[calc(100%-400px)] overflow-auto overflow-x-hidden rounded-2xl border border-gray-700 bg-black">
             <ChatComponent messages={messages} />
           </div>
