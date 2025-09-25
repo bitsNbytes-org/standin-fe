@@ -67,7 +67,9 @@ export const Welcome = ({
           {meetingDetails ? (
             <div className="w-full">
               <div className="top-0 right-0 left-0 p-8 pl-12">
-                <p className="text-8xl font-bold text-white">{meetingDetails.title}</p>
+                <p className="animate-text-shimmer !bg-clip-text p-2 text-8xl font-bold text-transparent">
+                  {meetingDetails.title}
+                </p>
                 <p className="text-2xl text-gray-400">{meetingDetails.description}</p>
               </div>
               <div className="text-2xl text-gray-400">
@@ -96,8 +98,11 @@ export const Welcome = ({
               </div>
             </div>
           ) : (
-            <div className="flex h-full w-full items-center justify-center overflow-hidden">
-              <p className="text-2xl text-gray-400">No meeting details found</p>
+            <div className="flex h-full w-full items-center justify-center gap-3 overflow-hidden">
+              <WaveLoader size={10} />
+              <p className="animate-text-shimmer !bg-clip-text p-2 text-2xl font-semibold text-transparent">
+                No meeting details found
+              </p>
             </div>
           )}
         </>

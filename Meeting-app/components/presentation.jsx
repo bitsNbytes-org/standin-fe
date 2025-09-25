@@ -10,7 +10,7 @@ const RenderPresentation = () => {
   useEffect(() => {
     if (room) {
       try {
-        room.registerTextStreamHandler('my-topic', async (reader) => {
+        room.registerTextStreamHandler('chat', async (reader) => {
           const text = await reader.readAll();
           const parsedJson = JSON.parse(text);
           setCurrentData(parsedJson);

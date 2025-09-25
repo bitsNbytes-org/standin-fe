@@ -9,7 +9,7 @@ export const MeetingInfo = ({ meetingDetails }: { meetingDetails: MeetingDetails
     const minutes = Math.floor(duration / (1000 * 60));
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
-    return `${hours}h ${remainingMinutes}m`;
+    return `${hours > 0 ? hours + 'h' : ''} ${remainingMinutes > 0 ? remainingMinutes + 'm' : ''}`;
   };
 
   if (!meetingDetails) return null;
@@ -48,18 +48,18 @@ export const MeetingInfo = ({ meetingDetails }: { meetingDetails: MeetingDetails
       <div className="p-2">
         <p className="py-2 text-sm font-bold text-white">Meeting Details</p>
         <div>
-          <span className="text-md min-w-20 text-gray-400">Project</span>
-          <span className="text-md ml-4 text-white"> {meetingDetails?.title}</span>
+          <span className="min-w-20 text-sm text-gray-400">Project</span>
+          <span className="ml-4 text-sm text-white">: {meetingDetails?.title}</span>
         </div>
         <div>
-          <span className="text-md text-gray-400">Duration</span>
-          <span className="text-md ml-[7px] text-white">
-            {calculateDuration(meetingDetails?.start_time, meetingDetails?.end_time)}
+          <span className="text-sm text-gray-400">Duration</span>
+          <span className="ml-[7px] text-sm text-white">
+            : {calculateDuration(meetingDetails?.start_time, meetingDetails?.end_time)}
           </span>
         </div>
         <div>
-          <span className="text-md text-gray-400">Type</span>
-          <span className="text-md ml-8 text-white"> {meetingDetails?.description}</span>
+          <span className="text-sm text-gray-400">Type</span>
+          <span className="ml-8 text-sm text-white">: {meetingDetails?.description}</span>
         </div>
       </div>
       <div className="mb-4 h-[0.1px] w-full bg-gray-500"></div>

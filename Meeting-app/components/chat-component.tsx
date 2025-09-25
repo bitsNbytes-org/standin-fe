@@ -31,9 +31,9 @@ export const ChatComponent = ({ messages }: { messages: ReceivedChatMessage[] })
               transition={{ duration: 0.5, ease: 'easeOut' }}
               style={{
                 borderRadius: '10px',
-                border: '0.5px solid darkslategrey',
                 margin: '10px',
                 padding: '2px',
+                border: '0.5px solid darkslategrey',
               }}
             >
               <div
