@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Project } from 'next/dist/build/swc/types';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import {
@@ -18,6 +19,7 @@ import {
   X,
   XCircle,
 } from 'lucide-react';
+import KnowledgeSource from '@/app/components/knowledge-source/knowledge-source';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -34,6 +36,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { BASE_URL } from '@/lib/utils';
 
 interface KnowledgeSource {
   id: string;
@@ -63,14 +66,15 @@ export default function ScheduleMeeting() {
   const [newContentText, setNewContentText] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const projects = [
-    'HR Onboarding Program',
-    'Frontend Development',
-    'Backend Systems',
-    'Development Standards',
-    'Security Training',
-    'Project Management',
-  ];
+  const [projects, setProjects] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const response = await fetch(`${BASE_URL}/project`);
+      const data = await response.json();
+      setProjects(data);
+    };
+    fetchProjects();
+  }, []);
 
   const attendees = [
     'John Smith - New Developer',
@@ -326,13 +330,13 @@ export default function ScheduleMeeting() {
                   <div className="space-y-2">
                     <Label>Project</Label>
                     <Select value={selectedProject} onValueChange={setSelectedProject} required>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select project" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="w-full">
                         {projects.map((project) => (
-                          <SelectItem key={project} value={project}>
-                            {project}
+                          <SelectItem key={project.id} value={project.id}>
+                            {project.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -342,10 +346,10 @@ export default function ScheduleMeeting() {
                   <div className="space-y-2">
                     <Label>Attendee</Label>
                     <Select value={selectedAttendee} onValueChange={setSelectedAttendee} required>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select attendee" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="w-full">
                         {attendees.map((attendee) => (
                           <SelectItem key={attendee} value={attendee}>
                             {attendee}
@@ -381,10 +385,10 @@ export default function ScheduleMeeting() {
                   <div className="space-y-2">
                     <Label>Time</Label>
                     <Select value={selectedTime} onValueChange={setSelectedTime} required>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select time" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="w-full">
                         {timeSlots.map((time) => (
                           <SelectItem key={time} value={time}>
                             {time}
@@ -409,193 +413,7 @@ export default function ScheduleMeeting() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Added Knowledge Sources */}
-                {knowledgeSources.length > 0 && (
-                  <div className="space-y-3">
-                    <Label>Added Sources</Label>
-                    <div className="space-y-2">
-                      {knowledgeSources.map((source) => (
-                        <div
-                          key={source.id}
-                          className="flex items-center justify-between rounded-lg border p-3"
-                        >
-                          <div className="flex flex-1 items-center space-x-3">
-                            {source.type === 'link' && <Link2 className="h-4 w-4 text-blue-500" />}
-                            {source.type === 'content' && (
-                              <FileText className="h-4 w-4 text-green-500" />
-                            )}
-                            {source.type === 'file' && (
-                              <Upload className="h-4 w-4 text-purple-500" />
-                            )}
-
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-sm font-medium">{source.title}</p>
-                              {source.type === 'link' && (
-                                <p className="text-muted-foreground truncate text-xs">
-                                  {source.url}
-                                </p>
-                              )}
-                              {source.type === 'file' && source.fileSize && (
-                                <p className="text-muted-foreground text-xs">
-                                  {formatFileSize(source.fileSize)}
-                                </p>
-                              )}
-                              {source.type === 'content' && (
-                                <p className="text-muted-foreground truncate text-xs">
-                                  {source.content.substring(0, 50)}...
-                                </p>
-                              )}
-                            </div>
-
-                            <div className="flex items-center space-x-2">
-                              {source.status === 'loading' && (
-                                <Loader2 className="text-muted-foreground h-4 w-4 animate-spin" />
-                              )}
-                              {source.status === 'success' && (
-                                <CheckCircle className="h-4 w-4 text-green-500" />
-                              )}
-                              {source.status === 'error' && (
-                                <XCircle className="h-4 w-4 text-red-500" />
-                              )}
-
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeKnowledgeSource(source.id)}
-                                className="p-1"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Add New Knowledge Sources */}
-                <Tabs defaultValue="link" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="link" className="flex items-center space-x-2">
-                      <Link2 className="h-4 w-4" />
-                      <span>Link</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="content" className="flex items-center space-x-2">
-                      <FileText className="h-4 w-4" />
-                      <span>Content</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="file" className="flex items-center space-x-2">
-                      <Upload className="h-4 w-4" />
-                      <span>File</span>
-                    </TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="link" className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="space-y-2">
-                        <Label htmlFor="link-title">Link Title</Label>
-                        <Input
-                          id="link-title"
-                          placeholder="e.g., API Documentation"
-                          value={newLinkTitle}
-                          onChange={(e) => setNewLinkTitle(e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="link-url">URL</Label>
-                        <Input
-                          id="link-url"
-                          placeholder="https://docs.example.com/guide"
-                          type="url"
-                          value={newLinkUrl}
-                          onChange={(e) => setNewLinkUrl(e.target.value)}
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        onClick={addKnowledgeLink}
-                        disabled={!newLinkUrl.trim() || !newLinkTitle.trim()}
-                        className="w-full"
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Link
-                      </Button>
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="content" className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="space-y-2">
-                        <Label htmlFor="content-title">Content Title</Label>
-                        <Input
-                          id="content-title"
-                          placeholder="e.g., Style Guide"
-                          value={newContentTitle}
-                          onChange={(e) => setNewContentTitle(e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="content-text">Content</Label>
-                        <Textarea
-                          id="content-text"
-                          placeholder="Paste any relevant text, guidelines, or instructions..."
-                          value={newContentText}
-                          onChange={(e) => setNewContentText(e.target.value)}
-                          className="min-h-[120px]"
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        onClick={addKnowledgeContent}
-                        disabled={!newContentTitle.trim() || !newContentText.trim()}
-                        className="w-full"
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Content
-                      </Button>
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="file" className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="space-y-2">
-                        <Label htmlFor="file-input">Select File</Label>
-                        <Input
-                          id="file-input"
-                          type="file"
-                          onChange={handleFileSelect}
-                          accept=".pdf,.doc,.docx,.txt,.md,.json,.csv,.xlsx"
-                          className="cursor-pointer"
-                        />
-                        <p className="text-muted-foreground text-xs">
-                          Supported formats: PDF, DOC, DOCX, TXT, MD, JSON, CSV, XLSX
-                        </p>
-                      </div>
-                      {selectedFile && (
-                        <div className="bg-muted/50 rounded-lg border p-3">
-                          <div className="flex items-center space-x-2">
-                            <Upload className="text-muted-foreground h-4 w-4" />
-                            <span className="text-sm font-medium">{selectedFile.name}</span>
-                            <Badge variant="secondary" className="text-xs">
-                              {formatFileSize(selectedFile.size)}
-                            </Badge>
-                          </div>
-                        </div>
-                      )}
-                      <Button
-                        type="button"
-                        onClick={addKnowledgeFile}
-                        disabled={!selectedFile}
-                        className="w-full"
-                      >
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload File
-                      </Button>
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                <KnowledgeSource />
               </CardContent>
             </Card>
           </div>
