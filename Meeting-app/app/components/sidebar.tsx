@@ -1,6 +1,5 @@
 import React from 'react';
-import { Calendar, FolderOpen, Home, LogOut, Plus, Settings, Users, Video } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { FolderOpen, Home, LogOut, Plus, Settings, Users, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type Page = 'dashboard' | 'create-meeting' | 'projects' | 'projects-list' | 'meeting-room';
@@ -10,34 +9,34 @@ interface SidebarProps {
   onNavigate: (page: Page) => void;
 }
 
-export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
-  const menuItems = [
-    {
-      id: 'dashboard' as Page,
-      label: 'Dashboard',
-      icon: Home,
-      description: 'Overview & meetings',
-    },
-    {
-      id: 'create-meeting' as Page,
-      label: 'Schedule Meeting',
-      icon: Plus,
-      description: 'Create new session',
-    },
-    {
-      id: 'projects-list' as Page,
-      label: 'Projects',
-      icon: FolderOpen,
-      description: 'Manage projects',
-    },
-    {
-      id: 'projects' as Page,
-      label: 'Add Project',
-      icon: Users,
-      description: 'Create new project',
-    },
-  ];
+const menuItems = [
+  {
+    id: 'dashboard' as Page,
+    label: 'Dashboard',
+    icon: Home,
+    description: 'Overview & meetings',
+  },
+  {
+    id: 'create-meeting' as Page,
+    label: 'Schedule Meeting',
+    icon: Plus,
+    description: 'Create new session',
+  },
+  {
+    id: 'projects-list' as Page,
+    label: 'Projects',
+    icon: FolderOpen,
+    description: 'Manage projects',
+  },
+  {
+    id: 'projects' as Page,
+    label: 'Add Project',
+    icon: Users,
+    description: 'Create new project',
+  },
+];
 
+export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
   return (
     <div className="bg-card border-border flex w-64 flex-col border-r">
       {/* Header */}
@@ -65,10 +64,10 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
           return (
             <Button
               key={item.id}
-              variant={isActive ? 'default' : 'ghost'}
+              variant="ghost"
               className={`h-auto w-full justify-start p-3 ${
                 isActive
-                  ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                  ? 'bg-primary text-primary-foreground hover:bg-primary/90 dark:hover:bg-primary/80 dark:hover:text-primary-foreground'
                   : 'hover:bg-accent'
               }`}
               onClick={() => onNavigate(item.id)}
