@@ -14,6 +14,7 @@ import {
   Settings,
   Users,
 } from 'lucide-react';
+import KnowledgeSource from '@/app/components/knowledge-source/knowledge-source';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -196,7 +197,7 @@ export function ProjectsList() {
       {/* Projects Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredProjects.map((project) => (
-          <Card key={project.id} className="transition-shadow hover:shadow-md">
+          <Card key={project.id} className="gap-3 transition-shadow hover:shadow-md">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="min-w-0 flex-1">
@@ -265,10 +266,12 @@ export function ProjectsList() {
                   <span className="text-muted-foreground text-xs">Knowledge Sources</span>
                 </div>
                 <div className="space-y-1">
-                  {project.documents?.slice(0, 2).map((link: string, index: number) => (
+                  {project.documents?.slice(0, 2).map((document: any, index: number) => (
                     <div key={index} className="flex items-center space-x-2 text-xs">
-                      <ExternalLink className="text-muted-foreground h-3 w-3" />
-                      <span className="text-muted-foreground truncate">{link}</span>
+                      <span className="flex-shrink-0">
+                        <ExternalLink className="text-muted-foreground h-3 w-3" />
+                      </span>
+                      <span className="text-muted-foreground truncate">{document.filename}</span>
                     </div>
                   ))}
                   {project.documents?.length > 2 && (
@@ -286,25 +289,37 @@ export function ProjectsList() {
               </div>
 
               {/* Actions */}
-              <div className="flex space-x-2 pt-2">
+              <div className="flex flex-col space-y-2">
                 <Button
-                  variant="outline"
+                  variant="primary"
                   size="sm"
-                  className="flex-1"
+                  className="w-full"
                   onClick={() => setSelectedProject(project)}
                 >
-                  <Edit className="mr-1 h-3 w-3" />
-                  Edit
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => router.push('schedule-meeting')}
-                >
                   <Plus className="mr-1 h-3 w-3" />
-                  Session
+                  Add Knowledge Sources
                 </Button>
+
+                <div className="flex space-x-2 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => setSelectedProject(project)}
+                  >
+                    <Edit className="mr-1 h-3 w-3" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => router.push('schedule-meeting')}
+                  >
+                    <Plus className="mr-1 h-3 w-3" />
+                    Session
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -332,8 +347,24 @@ export function ProjectsList() {
         </div>
       )}
 
-      {/* Edit Project Dialog */}
+      {/* Add Knowledge Sources Dialog */}
       <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <FileText className="text-primary h-5 w-5" />
+              <span>Knowledge Sources</span>
+            </DialogTitle>
+            <DialogDescription>
+              Add links, content, or files for the AI to reference during the session
+            </DialogDescription>
+          </DialogHeader>
+          <KnowledgeSource projectId={selectedProject?.id} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Project Dialog */}
+      {/* <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Edit Project: {selectedProject?.name}</DialogTitle>
@@ -357,7 +388,7 @@ export function ProjectsList() {
             </div>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 }
