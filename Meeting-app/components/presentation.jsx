@@ -30,11 +30,11 @@ const RenderPresentation = ({ index = 0 }) => {
 
   return (
     <div className="presentation-slide">
-      <p className="py-5 text-3xl font-bold text-[#52e2a6]">{currentData.heading}</p>
+      <p className="text-primary py-5 text-3xl font-bold">{currentData.heading}</p>
       <ul>
         {currentData.bullets.map((bullet, bulletIndex) => (
           <li key={bulletIndex} className="p-2 text-xl">
-            <span className="pr-3 text-[#52e2a6]">•</span>
+            <span className="text-primary pr-3">•</span>
             {bullet}
           </li>
         ))}

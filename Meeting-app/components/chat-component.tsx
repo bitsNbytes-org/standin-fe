@@ -10,7 +10,7 @@ export const ChatComponent = ({ messages }: { messages: ReceivedChatMessage[] })
   useEffect(() => {
     itemRefs.current[`${messages[messages.length - 1]?.id}`]?.scrollIntoView({
       behavior: 'smooth',
-      block: 'center',
+      block: 'end',
     });
   }, [messages]);
 

@@ -24,7 +24,7 @@ export const AgentTile = ({
       >
         <span
           className={cn([
-            'min-h-4 w-4 rounded-full bg-[#52e2a6]',
+            'bg-primary min-h-4 w-4 rounded-full',
             'origin-center transition-colors duration-250 ease-linear',
             'data-[lk-highlighted=true]:bg-foreground data-[lk-muted=true]:bg-muted',
           ])}

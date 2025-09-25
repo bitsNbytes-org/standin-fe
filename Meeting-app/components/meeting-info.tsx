@@ -20,7 +20,7 @@ export const MeetingInfo = () => {
           <p className="h-10 p-2 text-center text-lg font-bold text-white">StandIn AI</p>
         </div>
         <div className="flex flex-col items-center">
-          <div className="relative my-auto flex size-[100px] items-center justify-center rounded-full bg-[#52e2a6]">
+          <div className="bg-primary relative my-auto flex size-[100px] items-center justify-center rounded-full">
             <p className="text-5xl font-bold text-black">
               {meetingInfo.userName
                 .split(' ')
