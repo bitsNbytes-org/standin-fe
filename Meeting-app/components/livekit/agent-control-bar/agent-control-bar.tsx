@@ -104,7 +104,7 @@ export function AgentControlBar({
       )}
       {...props}
     >
-      <div className="flex flex-row justify-between gap-1 rounded-4xl border bg-[#2d2d2d] p-3">
+      <div className="bg-card flex flex-row justify-between gap-1 rounded-4xl border p-3">
         <div className="flex gap-1">
           {visibleControls.microphone && (
             <div className="flex items-center gap-0">
@@ -158,7 +158,7 @@ export function AgentControlBar({
             variant="destructive"
             onClick={onLeave}
             disabled={isDisconnecting}
-            className="border border-[#52e2a6] bg-[#2d2d2d] font-mono"
+            className="bg-card border border-[#52e2a6] font-mono"
           >
             <PhoneDisconnectIcon weight="bold" className="text-[#52e2a6]" />
             <span className="hidden text-[#52e2a6] md:inline">End Meeting</span>
