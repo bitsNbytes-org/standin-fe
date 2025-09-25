@@ -47,7 +47,7 @@ interface KnowledgeSource {
   fileSize?: number;
 }
 
-export function ScheduleMeeting() {
+export default function ScheduleMeeting() {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState('');
