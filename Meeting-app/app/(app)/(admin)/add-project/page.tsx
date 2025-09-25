@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, FileText, FolderPlus, Link, Plus, Users, X } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -10,13 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
-type Page = 'home' | 'create-meeting' | 'projects' | 'projects-list' | 'meeting-room';
-
-interface ProjectsPageProps {
-  onNavigate: (page: Page) => void;
-}
-
-export function ProjectsPage({ onNavigate }: ProjectsPageProps) {
+export function ProjectsPage() {
+  const router = useRouter();
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
@@ -61,14 +57,14 @@ export function ProjectsPage({ onNavigate }: ProjectsPageProps) {
       knowledgeLinks: knowledgeLinks.filter((link) => link.trim()),
       knowledgeText,
     });
-    onNavigate('projects-list');
+    router.push('projects');
   };
 
   return (
     <div className="mx-auto max-w-6xl p-6">
       {/* Header */}
       <div className="mb-6 flex items-center space-x-4">
-        <Button variant="ghost" size="sm" onClick={() => onNavigate('home')} className="p-2">
+        <Button variant="ghost" size="sm" onClick={() => router.push('dashboard')} className="p-2">
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
@@ -289,7 +285,7 @@ export function ProjectsPage({ onNavigate }: ProjectsPageProps) {
                 type="button"
                 variant="outline"
                 className="w-full"
-                onClick={() => onNavigate('projects-list')}
+                onClick={() => router.push('projects')}
               >
                 Cancel
               </Button>

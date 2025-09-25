@@ -1,13 +1,9 @@
 import React from 'react';
+import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { FolderOpen, Home, LogOut, Plus, Settings, Users, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-type Page = 'dashboard' | 'create-meeting' | 'projects' | 'projects-list' | 'meeting-room';
-
-interface SidebarProps {
-  currentPage: Page;
-  onNavigate: (page: Page) => void;
-}
+import { Page } from '@/lib/types';
 
 const menuItems = [
   {
@@ -17,26 +13,29 @@ const menuItems = [
     description: 'Overview & meetings',
   },
   {
-    id: 'create-meeting' as Page,
+    id: 'schedule-meeting' as Page,
     label: 'Schedule Meeting',
     icon: Plus,
     description: 'Create new session',
   },
   {
-    id: 'projects-list' as Page,
+    id: 'projects' as Page,
     label: 'Projects',
     icon: FolderOpen,
     description: 'Manage projects',
   },
   {
-    id: 'projects' as Page,
+    id: 'add-project' as Page,
     label: 'Add Project',
     icon: Users,
     description: 'Create new project',
   },
 ];
 
-export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
+export function Sidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
+
   return (
     <div className="bg-card border-border flex w-64 flex-col border-r">
       {/* Header */}
@@ -59,7 +58,7 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
       <nav className="flex-1 space-y-2 p-4">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = currentPage === item.id;
+          const isActive = pathname.includes(item.id);
 
           return (
             <Button
@@ -70,7 +69,7 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
                   ? 'bg-primary text-primary-foreground hover:bg-primary/90 dark:hover:bg-primary/80 dark:hover:text-primary-foreground'
                   : 'hover:bg-accent'
               }`}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => router.push(item.id)}
             >
               <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
               <div className="flex-1 text-left">

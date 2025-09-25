@@ -34,3 +34,5 @@ export interface SandboxConfig {
     | { type: 'boolean'; value: boolean }
     | null;
 }
+
+export type Page = 'dashboard' | 'schedule-meeting' | 'projects' | 'meeting-room' | 'add-project';

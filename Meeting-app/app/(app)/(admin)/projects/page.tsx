@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
   Calendar,
@@ -33,13 +34,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 
-type Page = 'home' | 'create-meeting' | 'projects' | 'projects-list' | 'meeting-room';
-
-interface ProjectsListProps {
-  onNavigate: (page: Page) => void;
-}
-
-export function ProjectsList({ onNavigate }: ProjectsListProps) {
+export function ProjectsList() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState<any>(null);
 
@@ -135,7 +131,12 @@ export function ProjectsList({ onNavigate }: ProjectsListProps) {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm" onClick={() => onNavigate('home')} className="p-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('dashboard')}
+            className="p-2"
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
@@ -143,7 +144,7 @@ export function ProjectsList({ onNavigate }: ProjectsListProps) {
             <p className="text-muted-foreground">Manage your AI meeting projects</p>
           </div>
         </div>
-        <Button onClick={() => onNavigate('projects')} className="bg-primary hover:bg-primary/90">
+        <Button onClick={() => router.push('projects')} className="bg-primary hover:bg-primary/90">
           <Plus className="mr-2 h-4 w-4" />
           New Project
         </Button>
@@ -276,7 +277,7 @@ export function ProjectsList({ onNavigate }: ProjectsListProps) {
                   variant="outline"
                   size="sm"
                   className="flex-1"
-                  onClick={() => onNavigate('create-meeting')}
+                  onClick={() => router.push('schedule-meeting')}
                 >
                   <Plus className="mr-1 h-3 w-3" />
                   Session
@@ -298,7 +299,10 @@ export function ProjectsList({ onNavigate }: ProjectsListProps) {
               ? 'Try adjusting your search terms'
               : 'Create your first project to get started'}
           </p>
-          <Button onClick={() => onNavigate('projects')} className="bg-primary hover:bg-primary/90">
+          <Button
+            onClick={() => router.push('projects')}
+            className="bg-primary hover:bg-primary/90"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Create Project
           </Button>
