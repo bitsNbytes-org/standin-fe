@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
@@ -24,7 +24,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   DropdownMenu,
@@ -33,84 +32,105 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { BASE_URL } from '@/lib/utils';
+
+const projects = [
+  {
+    id: 1,
+    name: 'HR Onboarding Program',
+    description:
+      'Complete onboarding process for new hires including company policies, benefits, and team introductions.',
+    members: [
+      { name: 'Sarah Wilson', role: 'HR Manager', initials: 'SW' },
+      { name: 'John Smith', role: 'New Employee', initials: 'JS' },
+    ],
+    knowledgeLinks: [
+      'https://company.com/handbook',
+      'https://benefits.company.com',
+      'https://policies.company.com',
+    ],
+    sessionsCount: 8,
+    lastActivity: '2 hours ago',
+    status: 'active',
+  },
+  {
+    id: 2,
+    name: 'Frontend Development',
+    description: 'React, TypeScript, and modern frontend development practices and standards.',
+    members: [
+      { name: 'Emma Johnson', role: 'Frontend Lead', initials: 'EJ' },
+      { name: 'Michael Chen', role: 'Developer', initials: 'MC' },
+      { name: 'Lisa Davis', role: 'Intern', initials: 'LD' },
+    ],
+    knowledgeLinks: [
+      'https://react.dev/docs',
+      'https://typescript.org/docs',
+      'https://github.com/company/frontend-guidelines',
+    ],
+    sessionsCount: 12,
+    lastActivity: '1 day ago',
+    status: 'active',
+  },
+  {
+    id: 3,
+    name: 'Security Training',
+    description: 'Cybersecurity awareness and best practices for all employees.',
+    members: [
+      { name: 'David Brown', role: 'Security Officer', initials: 'DB' },
+      { name: 'All Employees', role: 'Participants', initials: 'AE' },
+    ],
+    knowledgeLinks: ['https://security.company.com/training', 'https://nist.gov/cybersecurity'],
+    sessionsCount: 24,
+    lastActivity: '3 days ago',
+    status: 'active',
+  },
+  {
+    id: 4,
+    name: 'Legacy System Migration',
+    description: 'Knowledge transfer for migrating from legacy systems to modern architecture.',
+    members: [
+      { name: 'Senior Devs', role: 'Knowledge Holders', initials: 'SD' },
+      { name: 'New Team', role: 'Recipients', initials: 'NT' },
+    ],
+    documents: [
+      'https://wiki.company.com/legacy-docs',
+      'https://architecture.company.com/migration',
+    ],
+    sessionsCount: 6,
+    lastActivity: '1 week ago',
+    status: 'completed',
+  },
+];
 
 export function ProjectsList() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [projectList, setProjectList] = useState<any[]>([]);
 
-  const projects = [
-    {
-      id: 1,
-      name: 'HR Onboarding Program',
-      description:
-        'Complete onboarding process for new hires including company policies, benefits, and team introductions.',
-      members: [
-        { name: 'Sarah Wilson', role: 'HR Manager', initials: 'SW' },
-        { name: 'John Smith', role: 'New Employee', initials: 'JS' },
-      ],
-      knowledgeLinks: [
-        'https://company.com/handbook',
-        'https://benefits.company.com',
-        'https://policies.company.com',
-      ],
-      sessionsCount: 8,
-      lastActivity: '2 hours ago',
-      status: 'active',
-    },
-    {
-      id: 2,
-      name: 'Frontend Development',
-      description: 'React, TypeScript, and modern frontend development practices and standards.',
-      members: [
-        { name: 'Emma Johnson', role: 'Frontend Lead', initials: 'EJ' },
-        { name: 'Michael Chen', role: 'Developer', initials: 'MC' },
-        { name: 'Lisa Davis', role: 'Intern', initials: 'LD' },
-      ],
-      knowledgeLinks: [
-        'https://react.dev/docs',
-        'https://typescript.org/docs',
-        'https://github.com/company/frontend-guidelines',
-      ],
-      sessionsCount: 12,
-      lastActivity: '1 day ago',
-      status: 'active',
-    },
-    {
-      id: 3,
-      name: 'Security Training',
-      description: 'Cybersecurity awareness and best practices for all employees.',
-      members: [
-        { name: 'David Brown', role: 'Security Officer', initials: 'DB' },
-        { name: 'All Employees', role: 'Participants', initials: 'AE' },
-      ],
-      knowledgeLinks: ['https://security.company.com/training', 'https://nist.gov/cybersecurity'],
-      sessionsCount: 24,
-      lastActivity: '3 days ago',
-      status: 'active',
-    },
-    {
-      id: 4,
-      name: 'Legacy System Migration',
-      description: 'Knowledge transfer for migrating from legacy systems to modern architecture.',
-      members: [
-        { name: 'Senior Devs', role: 'Knowledge Holders', initials: 'SD' },
-        { name: 'New Team', role: 'Recipients', initials: 'NT' },
-      ],
-      knowledgeLinks: [
-        'https://wiki.company.com/legacy-docs',
-        'https://architecture.company.com/migration',
-      ],
-      sessionsCount: 6,
-      lastActivity: '1 week ago',
-      status: 'completed',
-    },
-  ];
+  const fetchProjects = async () => {
+    const response = await fetch(`${BASE_URL}/project`);
+    const data = await response.json();
+    setProjectList(
+      data.map((project: any, index: number) => ({
+        ...project,
+        status: 'active',
+        sessionsCount: 0,
+        members: projects[index].members,
+      }))
+    );
+  };
 
-  const filteredProjects = projects.filter(
-    (project) =>
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchTerm.toLowerCase())
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const filteredProjects = useMemo(
+    () =>
+      projectList.filter((project) =>
+        project.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [projectList, searchTerm]
   );
 
   const getStatusColor = (status: string) => {
@@ -144,7 +164,10 @@ export function ProjectsList() {
             <p className="text-muted-foreground">Manage your AI meeting projects</p>
           </div>
         </div>
-        <Button onClick={() => router.push('projects')} className="bg-primary hover:bg-primary/90">
+        <Button
+          onClick={() => router.push('add-project')}
+          className="bg-primary hover:bg-primary/90"
+        >
           <Plus className="mr-2 h-4 w-4" />
           New Project
         </Button>
@@ -218,17 +241,17 @@ export function ProjectsList() {
                   <span className="text-muted-foreground text-xs">Team</span>
                 </div>
                 <div className="flex -space-x-2">
-                  {project.members.slice(0, 3).map((member, index) => (
+                  {project.members?.slice(0, 3).map((member: any, index: number) => (
                     <Avatar key={index} className="border-background h-6 w-6 border-2">
                       <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                         {member.initials}
                       </AvatarFallback>
                     </Avatar>
                   ))}
-                  {project.members.length > 3 && (
+                  {project.members?.length > 3 && (
                     <div className="bg-muted border-background flex h-6 w-6 items-center justify-center rounded-full border-2">
                       <span className="text-muted-foreground text-xs">
-                        +{project.members.length - 3}
+                        +{project.members?.length - 3}
                       </span>
                     </div>
                   )}
@@ -242,15 +265,15 @@ export function ProjectsList() {
                   <span className="text-muted-foreground text-xs">Knowledge Sources</span>
                 </div>
                 <div className="space-y-1">
-                  {project.knowledgeLinks.slice(0, 2).map((link, index) => (
+                  {project.documents?.slice(0, 2).map((link: string, index: number) => (
                     <div key={index} className="flex items-center space-x-2 text-xs">
                       <ExternalLink className="text-muted-foreground h-3 w-3" />
                       <span className="text-muted-foreground truncate">{link}</span>
                     </div>
                   ))}
-                  {project.knowledgeLinks.length > 2 && (
+                  {project.documents?.length > 2 && (
                     <span className="text-muted-foreground text-xs">
-                      +{project.knowledgeLinks.length - 2} more sources
+                      +{project.documents.length - 2} more sources
                     </span>
                   )}
                 </div>
