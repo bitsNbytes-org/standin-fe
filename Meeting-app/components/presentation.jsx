@@ -16,22 +16,21 @@ const RenderPresentation = () => {
           setCurrentData(parsedJson);
         });
       } catch (error) {
-        toastAlert({
-          title: 'Error registering text stream handler',
-          description: `${error.name}: ${error.message}`,
-        });
+        console.log(error);
       }
     }
   }, [room]);
 
   return (
-    <div className="presentation-slide">
+    <div className="p-10">
       <p className="text-primary py-5 text-3xl font-bold">{currentData.heading}</p>
       <ul>
         {currentData.bullets.map((bullet, bulletIndex) => (
-          <li key={bulletIndex} className="p-2 text-xl">
-            <span className="text-primary pr-3">•</span>
-            {bullet}
+          <li key={bulletIndex} className="flex p-4 text-2xl">
+            <span className="text-primary animate-pulse pr-3 font-extrabold">•</span>
+            <span className="pl-3 text-white transition-all duration-300 ease-in-out">
+              {bullet}
+            </span>
           </li>
         ))}
       </ul>

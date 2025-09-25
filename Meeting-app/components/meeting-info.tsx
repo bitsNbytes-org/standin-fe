@@ -49,17 +49,17 @@ export const MeetingInfo = ({ meetingDetails }: { meetingDetails: MeetingDetails
         <p className="py-2 text-sm font-bold text-white">Meeting Details</p>
         <div>
           <span className="text-md min-w-20 text-gray-400">Project</span>
-          <span className="text-md ml-4 text-white">: {meetingDetails?.title}</span>
+          <span className="text-md ml-4 text-white"> {meetingDetails?.title}</span>
         </div>
         <div>
           <span className="text-md text-gray-400">Duration</span>
           <span className="text-md ml-[7px] text-white">
-            : {calculateDuration(meetingDetails?.start_time, meetingDetails?.end_time)}
+            {calculateDuration(meetingDetails?.start_time, meetingDetails?.end_time)}
           </span>
         </div>
         <div>
           <span className="text-md text-gray-400">Type</span>
-          <span className="text-md ml-8 text-white">: {meetingDetails?.description}</span>
+          <span className="text-md ml-8 text-white"> {meetingDetails?.description}</span>
         </div>
       </div>
       <div className="mb-4 h-[0.1px] w-full bg-gray-500"></div>
