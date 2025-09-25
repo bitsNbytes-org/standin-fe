@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Bot,
   Calendar,
@@ -8,20 +11,14 @@ import {
   Plus,
   TrendingUp,
   Users,
-  Video,
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-type Page = 'home' | 'create-meeting' | 'projects' | 'projects-list' | 'meeting-room';
-
-interface HomePageProps {
-  onNavigate: (page: Page) => void;
-}
-
-export function HomePage({ onNavigate }: HomePageProps) {
+export default function DashboardPage() {
+  const router = useRouter();
   const upcomingMeetings = [
     {
       id: 1,
@@ -118,7 +115,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           <p className="text-muted-foreground">Manage your AI meeting sessions</p>
         </div>
         <Button
-          onClick={() => onNavigate('create-meeting')}
+          onClick={() => router.push('schedule-meeting')}
           className="bg-primary hover:bg-primary/90"
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -167,7 +164,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 <div
                   key={meeting.id}
                   className="border-border hover:bg-accent/50 flex cursor-pointer items-center space-x-4 rounded-lg border p-4 transition-colors"
-                  onClick={() => onNavigate('meeting-room')}
+                  onClick={() => router.push('meetings/1')}
                 >
                   <Avatar>
                     <AvatarFallback className="bg-primary text-primary-foreground">
@@ -206,7 +203,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                   <Button
                     variant="outline"
                     className="mt-4"
-                    onClick={() => onNavigate('create-meeting')}
+                    onClick={() => router.push('schedule-meeting')}
                   >
                     Schedule your first meeting
                   </Button>
@@ -227,7 +224,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               <Button
                 variant="outline"
                 className="w-full justify-start"
-                onClick={() => onNavigate('create-meeting')}
+                onClick={() => router.push('schedule-meeting')}
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Schedule Meeting
@@ -235,7 +232,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               <Button
                 variant="outline"
                 className="w-full justify-start"
-                onClick={() => onNavigate('projects')}
+                onClick={() => router.push('projects')}
               >
                 <Users className="mr-2 h-4 w-4" />
                 Add Project
@@ -243,7 +240,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               <Button
                 variant="outline"
                 className="w-full justify-start"
-                onClick={() => onNavigate('projects-list')}
+                onClick={() => router.push('projects')}
               >
                 <FolderOpen className="mr-2 h-4 w-4" />
                 Manage Projects

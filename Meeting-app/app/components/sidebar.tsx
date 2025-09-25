@@ -1,42 +1,40 @@
 import React from 'react';
-import { Calendar, FolderOpen, Home, LogOut, Plus, Settings, Users, Video } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { FolderOpen, Home, LogOut, Plus, Settings, Users, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Page } from '@/lib/types';
 
-type Page = 'dashboard' | 'create-meeting' | 'projects' | 'projects-list' | 'meeting-room';
+const menuItems = [
+  {
+    id: 'dashboard' as Page,
+    label: 'Dashboard',
+    icon: Home,
+    description: 'Overview & meetings',
+  },
+  {
+    id: 'schedule-meeting' as Page,
+    label: 'Schedule Meeting',
+    icon: Plus,
+    description: 'Create new session',
+  },
+  {
+    id: 'projects' as Page,
+    label: 'Projects',
+    icon: FolderOpen,
+    description: 'Manage projects',
+  },
+  {
+    id: 'add-project' as Page,
+    label: 'Add Project',
+    icon: Users,
+    description: 'Create new project',
+  },
+];
 
-interface SidebarProps {
-  currentPage: Page;
-  onNavigate: (page: Page) => void;
-}
-
-export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
-  const menuItems = [
-    {
-      id: 'dashboard' as Page,
-      label: 'Dashboard',
-      icon: Home,
-      description: 'Overview & meetings',
-    },
-    {
-      id: 'create-meeting' as Page,
-      label: 'Schedule Meeting',
-      icon: Plus,
-      description: 'Create new session',
-    },
-    {
-      id: 'projects-list' as Page,
-      label: 'Projects',
-      icon: FolderOpen,
-      description: 'Manage projects',
-    },
-    {
-      id: 'projects' as Page,
-      label: 'Add Project',
-      icon: Users,
-      description: 'Create new project',
-    },
-  ];
+export function Sidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <div className="bg-card border-border flex w-64 flex-col border-r">
@@ -60,18 +58,18 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
       <nav className="flex-1 space-y-2 p-4">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = currentPage === item.id;
+          const isActive = pathname.includes(item.id);
 
           return (
             <Button
               key={item.id}
-              variant={isActive ? 'default' : 'ghost'}
+              variant="ghost"
               className={`h-auto w-full justify-start p-3 ${
                 isActive
-                  ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                  ? 'bg-primary text-primary-foreground hover:bg-primary/90 dark:hover:bg-primary/80 dark:hover:text-primary-foreground'
                   : 'hover:bg-accent'
               }`}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => router.push(item.id)}
             >
               <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
               <div className="flex-1 text-left">
