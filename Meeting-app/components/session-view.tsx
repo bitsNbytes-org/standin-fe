@@ -7,7 +7,6 @@ import useChatAndTranscription from '@/hooks/useChatAndTranscription';
 import { useDebugMode } from '@/hooks/useDebug';
 import type { AppConfig } from '@/lib/types';
 import { ChatComponent } from './chat-component';
-import { KnowledgeFeed } from './knowledge-feed';
 import { ChatInput } from './livekit/chat/chat-input';
 import { MeetingController } from './meeting-controler';
 import { MeetingInfo } from './meeting-info';
@@ -91,8 +90,7 @@ export const SessionView = ({
       </div>
       <div className="flex h-3/4 gap-10 p-10">
         <div className="bg-grey-950 bg-card h-full w-3/4 rounded-2xl border border-gray-700 p-10">
-          <RenderPresentation />
-          <div>{sessionStarted && room && <KnowledgeFeed />}</div>
+          <div>{sessionStarted && room && <RenderPresentation />}</div>
         </div>
         <div className="bg-card h-full w-1/4 min-w-[400px] rounded-2xl border border-gray-700 p-2">
           <MeetingInfo />

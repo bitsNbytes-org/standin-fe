@@ -1,32 +1,28 @@
-const RenderPresentation = ({ index = 0 }) => {
-  const data = [
-    {
-      heading: 'Welcome to KeyValue Software Systems!',
-      bullets: [
-        "We're thrilled to have you on board.",
-        'This presentation will guide you through a crucial part of your onboarding.',
-        'Understanding our Employee Handbook.',
-      ],
-    },
-    {
-      heading: 'Keycode presentation',
-      bullets: [
-        'This presentation will guide you through a crucial part of your onboarding.',
-        'Understanding our Employee Handbook.',
-        'Learn about our company policies and procedures.',
-        'Get familiar with our development workflow.',
-        'Understand our code review process.',
-      ],
-    },
-  ];
+import { useEffect, useState } from 'react';
+import { useRoomContext } from '@livekit/components-react';
+import { toastAlert } from '@/components/alert-toast';
 
-  // Get the data object at the specified index
-  const currentData = data[index];
+const RenderPresentation = () => {
+  const [currentData, setCurrentData] = useState({ heading: '', bullets: [] });
 
-  // If index is out of bounds, return null or a message
-  if (!currentData) {
-    return <div>No data available </div>;
-  }
+  const room = useRoomContext();
+
+  useEffect(() => {
+    if (room) {
+      try {
+        room.registerTextStreamHandler('my-topic', async (reader) => {
+          const text = await reader.readAll();
+          const parsedJson = JSON.parse(text);
+          setCurrentData(parsedJson);
+        });
+      } catch (error) {
+        toastAlert({
+          title: 'Error registering text stream handler',
+          description: `${error.name}: ${error.message}`,
+        });
+      }
+    }
+  }, [room]);
 
   return (
     <div className="presentation-slide">
