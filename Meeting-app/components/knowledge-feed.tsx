@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { RemoteParticipant, RoomEvent } from 'livekit-client';
 import { useRoomContext } from '@livekit/components-react';
+import { useDataChannel } from '@livekit/components-react';
 
 export function KnowledgeFeed() {
   const room = useRoomContext();
@@ -14,6 +15,7 @@ export function KnowledgeFeed() {
     const handleData = (payload: Uint8Array, participant?: RemoteParticipant) => {
       try {
         const decoded = JSON.parse(new TextDecoder().decode(payload));
+        console.log('decoded', decoded);
         if (decoded.type === 'knowledgeTransfer') {
           setFeed((prev) => [...prev, { ...decoded, from: participant?.identity, ts: Date.now() }]);
         }
@@ -38,6 +40,13 @@ export function KnowledgeFeed() {
       room.off(RoomEvent.DataReceived, handleData);
     };
   }, [room]);
+
+  // Receive all messages (no topic filtering)
+  const { message: latestMessage, send } = useDataChannel((msg) =>
+    console.log('message received', msg)
+  );
+
+  console.log('latestMessage', latestMessage);
 
   return (
     <div className="h-full overflow-y-auto border-l border-gray-300 p-4">

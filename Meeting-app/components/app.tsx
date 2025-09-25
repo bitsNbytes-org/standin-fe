@@ -10,16 +10,16 @@ import { Toaster } from '@/components/ui/sonner';
 import { Welcome } from '@/components/welcome';
 import useConnectionDetails from '@/hooks/useConnectionDetails';
 import type { AppConfig } from '@/lib/types';
-import { KnowledgeFeed } from './knowledge-feed';
 
 const MotionWelcome = motion.create(Welcome);
 const MotionSessionView = motion.create(SessionView);
 
 interface AppProps {
   appConfig: AppConfig;
+  userInfo: string;
 }
 
-export function App({ appConfig }: AppProps) {
+export function App({ appConfig, userInfo }: AppProps) {
   const room = useMemo(() => new Room(), []);
   const [sessionStarted, setSessionStarted] = useState(false);
   const { refreshConnectionDetails, existingOrRefreshConnectionDetails } =
@@ -56,11 +56,6 @@ export function App({ appConfig }: AppProps) {
         ),
       ]).catch((error) => {
         if (aborted) {
-          // Once the effect has cleaned up after itself, drop any errors
-          //
-          // These errors are likely caused by this effect rerunning rapidly,
-          // resulting in a previous run `disconnect` running in parallel with
-          // a current run `connect`
           return;
         }
 
@@ -78,12 +73,18 @@ export function App({ appConfig }: AppProps) {
 
   const { startButtonText } = appConfig;
 
+  const handleStartCall = () => {
+    //trigger api and get response
+    console.log('userInfo', userInfo);
+    setSessionStarted(true);
+  };
+
   return (
     <main>
       <MotionWelcome
         key="welcome"
         startButtonText={startButtonText}
-        onStartCall={() => setSessionStarted(true)}
+        onStartCall={handleStartCall}
         disabled={sessionStarted}
         initial={{ opacity: 1 }}
         animate={{ opacity: sessionStarted ? 0 : 1 }}
