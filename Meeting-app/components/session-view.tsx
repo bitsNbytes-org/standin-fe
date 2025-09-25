@@ -90,7 +90,7 @@ export const SessionView = ({
         <p className="text-3xl font-bold text-white">{meetingDetails?.title}</p>
         <p className="text-xl text-gray-400">{meetingDetails?.description}</p>
       </div>
-      <div className="flex h-3/4 gap-10 p-10">
+      <div className="flex h-[calc(100%-300px)] gap-10 p-10">
         <div className="bg-grey-950 bg-card h-full w-3/4 rounded-2xl border border-gray-700 p-10">
           <div>{sessionStarted && room && <RenderPresentation />}</div>
         </div>
