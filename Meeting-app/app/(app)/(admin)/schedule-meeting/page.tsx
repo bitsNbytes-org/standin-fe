@@ -55,9 +55,13 @@ export default function ScheduleMeeting() {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState('');
   const [meetingTitle, setMeetingTitle] = useState('');
-  const [selectedProject, setSelectedProject] = useState('');
+  const [selectedProject, setSelectedProject] = useState<string>('');
   const [selectedAttendee, setSelectedAttendee] = useState('');
   const [knowledgeSources, setKnowledgeSources] = useState<KnowledgeSource[]>([]);
+
+  useEffect(() => {
+    console.log('selectedProject', selectedProject, typeof selectedProject);
+  }, [selectedProject]);
 
   // Form states for adding new knowledge sources
   const [newLinkUrl, setNewLinkUrl] = useState('');
@@ -66,7 +70,7 @@ export default function ScheduleMeeting() {
   const [newContentText, setNewContentText] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<{ id: number; name: string }[]>([]);
   useEffect(() => {
     const fetchProjects = async () => {
       const response = await fetch(`${BASE_URL}/project`);
@@ -329,13 +333,17 @@ export default function ScheduleMeeting() {
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Project</Label>
-                    <Select value={selectedProject} onValueChange={setSelectedProject} required>
+                    <Select
+                      value={selectedProject.toString()}
+                      onValueChange={setSelectedProject}
+                      required
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select project" />
                       </SelectTrigger>
                       <SelectContent className="w-full">
                         {projects.map((project) => (
-                          <SelectItem key={project.id} value={project.id}>
+                          <SelectItem key={project.id} value={project.id.toString()}>
                             {project.name}
                           </SelectItem>
                         ))}
