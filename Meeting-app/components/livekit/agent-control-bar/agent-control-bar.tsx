@@ -155,10 +155,9 @@ export function AgentControlBar({
         <Logo />
         {visibleControls.leave && (
           <Button
-            variant="destructive"
             onClick={onLeave}
             disabled={isDisconnecting}
-            className="bg-card border-primary border font-mono"
+            className="bg-card border-primary border hover:animate-pulse"
           >
             <PhoneDisconnectIcon weight="bold" className="text-primary" />
             <span className="text-primary hidden md:inline">End Meeting</span>

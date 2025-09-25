@@ -86,9 +86,11 @@ export const SessionView = ({
 
   return (
     <section ref={ref} className="h-screen">
-      <div className="bg-card top-0 right-0 left-0 p-8 pl-12">
-        <p className="text-3xl font-bold text-white">{meetingDetails?.title}</p>
-        <p className="text-xl text-gray-400">{meetingDetails?.description}</p>
+      <div className="bg-card top-0 right-0 left-0 pl-12">
+        <div className="px-2 py-6">
+          <p className="text-3xl font-bold text-white">{meetingDetails?.title}</p>
+          <p className="text-xl text-gray-400">{meetingDetails?.description}</p>
+        </div>
       </div>
       <div className="flex h-[calc(100%-300px)] gap-10 p-10">
         <div className="bg-grey-950 bg-card h-full w-3/4 rounded-2xl border border-gray-700 p-10">

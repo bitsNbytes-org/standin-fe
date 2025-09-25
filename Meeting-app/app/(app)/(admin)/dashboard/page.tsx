@@ -116,7 +116,7 @@ export default function DashboardPage() {
         </div>
         <Button
           onClick={() => router.push('schedule-meeting')}
-          className="bg-primary hover:bg-primary/90"
+          className="bg-primary hover:bg-primary/90 text-black"
         >
           <Plus className="mr-2 h-4 w-4" />
           Schedule Meeting
