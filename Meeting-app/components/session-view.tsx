@@ -85,16 +85,16 @@ export const SessionView = ({
 
   return (
     <section ref={ref} className="h-screen">
-      <div className="top-0 right-0 left-0 bg-[#2d2d2d] p-8 pl-12">
+      <div className="bg-card top-0 right-0 left-0 p-8 pl-12">
         <p className="text-3xl font-bold text-white">React Fundamentals</p>
         <p className="text-xl text-gray-400">Training Session</p>
       </div>
       <div className="flex h-3/4 gap-10 p-10">
-        <div className="bg-grey-950 h-full w-3/4 rounded-2xl border border-gray-700 bg-[#2d2d2d] p-10">
+        <div className="bg-grey-950 bg-card h-full w-3/4 rounded-2xl border border-gray-700 p-10">
           <RenderPresentation />
           <div>{sessionStarted && room && <KnowledgeFeed />}</div>
         </div>
-        <div className="h-full w-1/4 min-w-[400px] rounded-2xl border border-gray-700 bg-[#2d2d2d] p-2">
+        <div className="bg-card h-full w-1/4 min-w-[400px] rounded-2xl border border-gray-700 p-2">
           <MeetingInfo />
           <div className="mx-2 h-[calc(100%-400px)] overflow-auto overflow-x-hidden rounded-2xl border border-gray-700 bg-black">
             <ChatComponent messages={messages} />
