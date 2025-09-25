@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Project } from 'next/dist/build/swc/types';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import {
@@ -34,8 +33,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
 import { BASE_URL } from '@/lib/utils';
 
 interface KnowledgeSource {
@@ -73,6 +70,7 @@ export default function ScheduleMeeting() {
       const data = await response.json();
       setProjects(data);
     };
+    setSelectedProject(projects[0]?.id);
     fetchProjects();
   }, []);
 
@@ -289,7 +287,7 @@ export default function ScheduleMeeting() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl p-6">
+    <div className="mx-auto max-w-6xl p-6">
       {/* Header */}
       <div className="mb-6 flex items-center space-x-4">
         <Button variant="ghost" size="sm" onClick={() => router.push('dashboard')} className="p-2">
