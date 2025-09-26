@@ -55,7 +55,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchMeetings = async () => {
-      const response = await fetch(`${BASE_URL}/meeting?limit=10&skip=0`);
+      const response = await fetch(`${BASE_URL}/meeting?limit=100&skip=0`);
       const data = await response.json();
       setMeetings(data.filter((meeting: MeetingDetails) => meeting.attendees.length > 0));
     };
