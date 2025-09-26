@@ -35,7 +35,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { BASE_URL, formatFileSize, voiceTranscript } from '@/lib/utils';
 
 const attendees = [
-  { name: 'Aravind Balakrishnan', email: 'aravind@keyvalue.systems' },
+  { name: 'Aravind Balakrishnan', email: 'aravindbalan222@gmail.com' },
   { name: 'Arjun B', email: 'arjun.b@keyvalue.systems' },
   { name: 'Jino Antony', email: 'jino.a@keyvalue.systems' },
   { name: 'Mathew V Kariath', email: 'mathew.v@keyvalue.systems' },
