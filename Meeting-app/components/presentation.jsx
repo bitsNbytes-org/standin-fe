@@ -36,7 +36,11 @@ const RenderPresentation = () => {
           </li>
         ))}
       </ul>
-      <div className="absolute right-10 -bottom-20 rounded-2xl bg-white p-2">
+      <div
+        className={`absolute right-10 bottom-0 rounded-2xl bg-white p-2 transition-all duration-300 ease-in-out ${
+          currentData?.bullets.length > 0 ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
         <Image priority src={PresentationLogo} alt="Presentation Logo" width={100} height={100} />
       </div>
     </div>
