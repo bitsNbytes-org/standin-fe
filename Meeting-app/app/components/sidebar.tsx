@@ -94,8 +94,8 @@ export function Sidebar() {
             <span className="text-primary-foreground text-xs">HR</span>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm">Sarah Wilson</p>
-            <p className="text-muted-foreground text-xs">HR Manager</p>
+            <p className="truncate text-sm">Mathew V Kariath</p>
+            <p className="text-muted-foreground text-xs">Sales Head</p>
           </div>
         </div>
 

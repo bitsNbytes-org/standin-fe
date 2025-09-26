@@ -42,7 +42,7 @@ const projects = [
     description:
       'Complete onboarding process for new hires including company policies, benefits, and team introductions.',
     members: [
-      { name: 'Sarah Wilson', role: 'HR Manager', initials: 'SW' },
+      { name: 'Mathew ', role: 'Sales Head', initials: 'V Kariath' },
       { name: 'John Smith', role: 'New Employee', initials: 'JS' },
     ],
     knowledgeLinks: [
