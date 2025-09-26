@@ -291,8 +291,9 @@ export default function ScheduleMeeting() {
                           mode="single"
                           selected={selectedDate}
                           onSelect={setSelectedDate}
-                          disabled={(date) => date < new Date()}
+                          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                           initialFocus
+                          required
                         />
                       </PopoverContent>
                     </Popover>
