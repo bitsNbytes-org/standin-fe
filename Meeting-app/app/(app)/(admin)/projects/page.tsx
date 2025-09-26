@@ -118,6 +118,7 @@ export function ProjectsList() {
         status: 'active',
         sessionsCount: 0,
         members: projects[index].members,
+        lastActivity: projects[index].lastActivity,
       }))
     );
   };

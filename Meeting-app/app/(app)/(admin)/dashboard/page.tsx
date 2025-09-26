@@ -84,13 +84,6 @@ export default function DashboardPage() {
       icon: Clock,
       color: 'text-orange-600',
     },
-    {
-      title: 'AI Sessions',
-      value: '18',
-      change: '+8',
-      icon: Bot,
-      color: 'text-purple-600',
-    },
   ];
 
   const getStatusColor = (status: string) => {
@@ -130,7 +123,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (

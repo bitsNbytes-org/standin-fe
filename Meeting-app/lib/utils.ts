@@ -76,4 +76,4 @@ export const getAppConfig = cache(async (headers: Headers): Promise<AppConfig> =
   return APP_CONFIG_DEFAULTS;
 });
 
-export const BASE_URL = 'http://192.168.4.171:8000';
+export const BASE_URL = process.env.NEXT_PUBLIC_APP_ENDPOINT;
