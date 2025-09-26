@@ -234,6 +234,7 @@ export default function ScheduleMeeting() {
                     placeholder="e.g., This meeting is about the new features of the product"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
+                    required
                   />
                 </div>
 
