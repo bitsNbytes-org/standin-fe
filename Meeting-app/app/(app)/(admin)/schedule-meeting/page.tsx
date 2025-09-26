@@ -7,16 +7,11 @@ import {
   ArrowLeft,
   Bot,
   Calendar as CalendarIcon,
-  CheckCircle,
   Clock,
   ExternalLink,
   FileText,
   Link2,
-  Loader2,
-  Plus,
   Upload,
-  X,
-  XCircle,
 } from 'lucide-react';
 import KnowledgeSource from '@/app/components/knowledge-source/knowledge-source';
 import { Badge } from '@/components/ui/badge';
@@ -36,12 +31,14 @@ import {
 import { BASE_URL } from '@/lib/utils';
 
 const attendees = [
+  { name: 'Aravind Balakrishnan', email: 'aravind@keyvalue.systems' },
+  { name: 'Arjun B', email: 'arjun.b@keyvalue.systems' },
+  { name: 'Jino Antony', email: 'jino.a@keyvalue.systems' },
+  { name: 'Mathew V Kariath', email: 'mathew.v@keyvalue.systems' },
+  { name: 'Nishanth K C', email: 'nishanth@keyvalue.systems' },
+  { name: 'Ratheesha S', email: 'ratheesha@keyvalue.systems' },
   { name: 'Rose Joseph', email: 'rose.j@keyvalue.systems' },
-  { name: 'Emma Johnson', email: 'emma.johnson@example.com' },
-  { name: 'Michael Chen', email: 'michael.chen@example.com' },
-  { name: 'Sarah Williams', email: 'sarah.williams@example.com' },
-  { name: 'David Brown', email: 'david.brown@example.com' },
-  { name: 'Lisa Davis', email: 'lisa.davis@example.com' },
+  { name: 'Sidharth', email: 'sidharth.at@keyvalue.systems' },
 ];
 
 const timeSlots = [
@@ -88,7 +85,6 @@ export default function ScheduleMeeting() {
 
   // Form states for adding new knowledge sources
   const [newLinkUrl, setNewLinkUrl] = useState('');
-  const [newLinkTitle, setNewLinkTitle] = useState('');
   const [newContentText, setNewContentText] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -137,6 +133,18 @@ export default function ScheduleMeeting() {
     formData.append('start_time', startDateTime);
     formData.append('end_time', endDateTime);
     formData.append('attendees', [selectedAttendee]);
+    if (newLinkUrl) {
+      formData.append('document_source', 'url');
+      formData.append('document_url', newLinkUrl);
+    }
+    if (newContentText) {
+      formData.append('document_source', 'content');
+      formData.append('document_content', newContentText);
+    }
+    if (selectedFile) {
+      formData.append('document_source', 'file');
+      formData.append('document_file', selectedFile);
+    }
 
     const response = await fetch(`${BASE_URL}/meeting/schedule`, {
       method: 'POST',
@@ -197,7 +205,6 @@ export default function ScheduleMeeting() {
                     placeholder="e.g., This meeting is about the new features of the product"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    required
                   />
                 </div>
 
@@ -292,7 +299,11 @@ export default function ScheduleMeeting() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <KnowledgeSource />
+                <KnowledgeSource
+                  setUrlForMeeting={setNewLinkUrl}
+                  setContentForMeeting={setNewContentText}
+                  setFileForMeeting={setSelectedFile}
+                />
               </CardContent>
             </Card>
           </div>

@@ -27,7 +27,17 @@ type KnowledgeSourceType = {
   source?: string;
 };
 
-const KnowledgeSource = ({ projectId }: { projectId?: number }) => {
+const KnowledgeSource = ({
+  projectId,
+  setUrlForMeeting,
+  setContentForMeeting,
+  setFileForMeeting,
+}: {
+  projectId?: number;
+  setUrlForMeeting?: (url: string) => void;
+  setContentForMeeting?: (content: string) => void;
+  setFileForMeeting?: (file: File | null) => void;
+}) => {
   const [knowledgeSources, setKnowledgeSources] = useState<KnowledgeSourceType[]>([]);
   const [newLinkUrl, setNewLinkUrl] = useState('');
   const [newContentText, setNewContentText] = useState('');
@@ -136,6 +146,7 @@ const KnowledgeSource = ({ projectId }: { projectId?: number }) => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      setFileForMeeting?.(file);
     }
   };
 
@@ -277,7 +288,10 @@ const KnowledgeSource = ({ projectId }: { projectId?: number }) => {
                 placeholder="https://docs.example.com/guide"
                 type="url"
                 value={newLinkUrl}
-                onChange={(e) => setNewLinkUrl(e.target.value)}
+                onChange={(e) => {
+                  setNewLinkUrl(e.target.value);
+                  setUrlForMeeting?.(e.target.value);
+                }}
               />
             </div>
             {projectId && (
@@ -303,7 +317,10 @@ const KnowledgeSource = ({ projectId }: { projectId?: number }) => {
                 id="content-text"
                 placeholder="Paste any relevant text, guidelines, or instructions..."
                 value={newContentText}
-                onChange={(e) => setNewContentText(e.target.value)}
+                onChange={(e) => {
+                  setNewContentText(e.target.value);
+                  setContentForMeeting?.(e.target.value);
+                }}
                 className="min-h-[120px]"
               />
             </div>
