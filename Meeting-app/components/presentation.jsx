@@ -14,8 +14,8 @@ const RenderPresentation = () => {
         room.registerTextStreamHandler('chat', async (reader) => {
           const text = await reader.readAll();
           const parsedJson = JSON.parse(text);
-          // setCurrentData(parsedJson.message);
-          setCurrentData(parsedJson);
+          setCurrentData(parsedJson.message);
+          // setCurrentData(parsedJson);
         });
       } catch (error) {
         console.log(error);
