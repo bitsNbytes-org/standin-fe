@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { BASE_URL } from '@/lib/utils';
+import { BASE_URL, formatFileSize } from '@/lib/utils';
 
 type KnowledgeSourceType = {
   id: number;
@@ -148,14 +148,6 @@ const KnowledgeSource = ({
       setSelectedFile(file);
       setFileForMeeting?.(file);
     }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   const addKnowledgeFile = async () => {

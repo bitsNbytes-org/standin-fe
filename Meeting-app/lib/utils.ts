@@ -77,3 +77,14 @@ export const getAppConfig = cache(async (headers: Headers): Promise<AppConfig> =
 });
 
 export const BASE_URL = process.env.NEXT_PUBLIC_APP_ENDPOINT;
+
+export const voiceTranscript =
+  "Hi, my name is Mathew. This is a sample recording of my voice. I'm speaking naturally, clearly, and at a normal pace. The quick brown fox jumps over the lazy dog. I enjoy reading books, traveling to new places, and learning new things. Thank you for listening to my voice sample";
+
+export const formatFileSize = (bytes: number) => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};

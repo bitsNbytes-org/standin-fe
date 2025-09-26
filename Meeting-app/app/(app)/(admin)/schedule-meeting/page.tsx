@@ -11,6 +11,7 @@ import {
   ExternalLink,
   FileText,
   Link2,
+  Mic,
   Upload,
 } from 'lucide-react';
 import KnowledgeSource from '@/app/components/knowledge-source/knowledge-source';
@@ -19,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -29,7 +31,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { BASE_URL } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { BASE_URL, formatFileSize, voiceTranscript } from '@/lib/utils';
 
 const attendees = [
   { name: 'Aravind Balakrishnan', email: 'aravind@keyvalue.systems' },
@@ -103,6 +106,10 @@ export default function ScheduleMeeting() {
   const [newLinkUrl, setNewLinkUrl] = useState('');
   const [newContentText, setNewContentText] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // Voice cloning states
+  const [voiceFile, setVoiceFile] = useState<File | null>(null);
+  const [voiceConsent, setVoiceConsent] = useState(false);
 
   const [projects, setProjects] = useState<{ id: number; name: string }[]>([]);
   useEffect(() => {
@@ -344,6 +351,86 @@ export default function ScheduleMeeting() {
                 />
               </CardContent>
             </Card>
+
+            {/* Voice Cloning */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Mic className="text-primary h-5 w-5" />
+                  <span>Voice Cloning (Optional)</span>
+                </CardTitle>
+                <CardDescription>
+                  Upload a voice sample to personalize your AI agent's voice. This feature allows
+                  the AI to speak in your voice during meetings.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label>Required Voice Sample Script</Label>
+                    <div className="bg-muted/50 rounded-lg border p-3">
+                      <p className="text-sm italic">"{voiceTranscript}"</p>
+                    </div>
+                    <p className="text-muted-foreground text-xs">
+                      Please ensure your audio recording contains exactly this text for optimal
+                      voice cloning results.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="voice-file">Voice Sample Audio File</Label>
+                    <Input
+                      id="voice-file"
+                      type="file"
+                      onChange={(e) => setVoiceFile(e.target.files?.[0] || null)}
+                      accept=".mp3,.wav,.m4a,.ogg,.flac"
+                      className="cursor-pointer"
+                    />
+                    <p className="text-muted-foreground text-xs">
+                      Supported formats: MP3, WAV, M4A, OGG, FLAC (max 10MB, 30-60 seconds
+                      recommended)
+                    </p>
+                  </div>
+
+                  {voiceFile && (
+                    <div className="bg-muted/50 rounded-lg border p-3">
+                      <div className="flex items-center space-x-2">
+                        <Mic className="text-primary h-4 w-4" />
+                        <span className="text-sm font-medium">{voiceFile.name}</span>
+                        <Badge variant="secondary" className="text-xs">
+                          {formatFileSize(voiceFile.size)}
+                        </Badge>
+                      </div>
+                    </div>
+                  )}
+
+                  {voiceFile && (
+                    <>
+                      <div className="flex items-start space-x-3 rounded-lg border bg-amber-50 p-4 dark:bg-amber-950/20">
+                        <Checkbox
+                          id="voice-consent"
+                          checked={voiceConsent}
+                          onCheckedChange={(checked) => setVoiceConsent(checked as boolean)}
+                        />
+                        <div className="flex-1">
+                          <Label
+                            htmlFor="voice-consent"
+                            className="cursor-pointer text-sm font-medium"
+                          >
+                            Voice Cloning Consent
+                          </Label>
+                          <p className="text-muted-foreground mt-1 text-xs">
+                            I consent to the use of my voice for AI voice cloning purposes within
+                            this application. I understand that my voice will be used to create a
+                            synthetic version that can speak on my behalf during meetings.
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Summary Sidebar */}
@@ -428,7 +515,11 @@ export default function ScheduleMeeting() {
             </Card>
 
             <div className="space-y-2">
-              <Button type="submit" className="bg-primary hover:bg-primary/90 w-full">
+              <Button
+                type="submit"
+                className="bg-primary hover:bg-primary/90 w-full"
+                disabled={voiceFile ? !voiceConsent : false}
+              >
                 Send Meeting Invite
               </Button>
               <Button
