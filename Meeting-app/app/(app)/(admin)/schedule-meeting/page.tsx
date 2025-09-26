@@ -81,6 +81,7 @@ export default function ScheduleMeeting() {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState('');
   const [meetingTitle, setMeetingTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [selectedProject, setSelectedProject] = useState<string>('');
   const [selectedAttendee, setSelectedAttendee] = useState('');
   const [knowledgeSources, setKnowledgeSources] = useState<KnowledgeSource[]>([]);
@@ -132,6 +133,7 @@ export default function ScheduleMeeting() {
     const formData = new FormData();
     formData.append('title', meetingTitle);
     formData.append('project_id', selectedProject);
+    formData.append('description', description);
     formData.append('start_time', startDateTime);
     formData.append('end_time', endDateTime);
     formData.append('attendees', [selectedAttendee]);
@@ -184,6 +186,17 @@ export default function ScheduleMeeting() {
                     placeholder="e.g., React Basics Training"
                     value={meetingTitle}
                     onChange={(e) => setMeetingTitle(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Input
+                    id="description"
+                    placeholder="e.g., This meeting is about the new features of the product"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     required
                   />
                 </div>
@@ -302,7 +315,9 @@ export default function ScheduleMeeting() {
                 {selectedProject && (
                   <div>
                     <Label className="text-muted-foreground text-xs">PROJECT</Label>
-                    <p className="text-sm">{selectedProject}</p>
+                    <p className="text-sm">
+                      {projects.find((project) => project.id === Number(selectedProject))?.name}
+                    </p>
                   </div>
                 )}
 
@@ -365,7 +380,7 @@ export default function ScheduleMeeting() {
 
             <div className="space-y-2">
               <Button type="submit" className="bg-primary hover:bg-primary/90 w-full">
-                Schedule Meeting
+                Send Meeting Invite
               </Button>
               <Button
                 type="button"

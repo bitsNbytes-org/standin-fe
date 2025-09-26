@@ -24,12 +24,6 @@ const menuItems = [
     icon: FolderOpen,
     description: 'Manage projects',
   },
-  {
-    id: 'add-project' as Page,
-    label: 'Add Project',
-    icon: Users,
-    description: 'Create new project',
-  },
 ];
 
 export function Sidebar() {

@@ -33,7 +33,8 @@ export const ChatComponent = ({ messages }: { messages: ReceivedChatMessage[] })
                 borderRadius: '10px',
                 margin: '10px',
                 padding: '2px',
-                border: '0.5px solid darkslategrey',
+                borderLeft: '1px solid black',
+                borderTop: '1px solid darkslategrey',
               }}
             >
               <div

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Bot,
@@ -16,6 +16,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { MeetingDetails } from '@/lib/types';
+import { BASE_URL } from '@/lib/utils';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -48,6 +50,17 @@ export default function DashboardPage() {
       type: 'knowledge-transfer',
     },
   ];
+
+  const [meetings, setMeetings] = useState<MeetingDetails[]>([]);
+
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      const response = await fetch(`${BASE_URL}/meeting?limit=10&skip=0`);
+      const data = await response.json();
+      setMeetings(data.filter((meeting: MeetingDetails) => meeting.attendees.length > 0));
+    };
+    fetchMeetings();
+  }, []);
 
   const stats = [
     {
@@ -114,13 +127,6 @@ export default function DashboardPage() {
           <h1 className="text-3xl">Dashboard</h1>
           <p className="text-muted-foreground">Manage your AI meeting sessions</p>
         </div>
-        <Button
-          onClick={() => router.push('schedule-meeting')}
-          className="bg-primary hover:bg-primary/90 text-black"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Schedule Meeting
-        </Button>
       </div>
 
       {/* Stats Grid */}
@@ -155,44 +161,54 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 Upcoming Meetings
-                <Badge variant="secondary">{upcomingMeetings.length} scheduled</Badge>
+                <Badge variant="secondary">{meetings.length} scheduled</Badge>
               </CardTitle>
               <CardDescription>AI sessions scheduled for today and tomorrow</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {upcomingMeetings.map((meeting) => (
+            <CardContent className="h-[calc(100vh-400px)] space-y-4 overflow-y-auto">
+              {meetings.map((meeting) => (
                 <div
                   key={meeting.id}
-                  className="border-border hover:bg-accent/50 flex cursor-pointer items-center space-x-4 rounded-lg border p-4 transition-colors"
-                  onClick={() => router.push('meetings/1')}
+                  className="border-border hover:bg-accent/50 flex items-center space-x-4 rounded-lg border p-4 transition-colors"
                 >
                   <Avatar>
                     <AvatarFallback className="bg-primary text-primary-foreground">
-                      {meeting.attendee
-                        .split(' ')
-                        .map((n) => n[0])
-                        .join('')}
+                      {meeting?.attendees[0]
+                        ?.split(' ')
+                        .slice(0, 2)
+                        .map((name) => name[0])
+                        .join('')
+                        .toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex items-center space-x-2">
                       <h4 className="truncate">{meeting.title}</h4>
-                      <Badge variant="outline" className={getTypeColor(meeting.type)}>
+                      {/* <Badge variant="outline" className={getTypeColor(meeting.type)}>
                         {meeting.type.replace('-', ' ')}
-                      </Badge>
+                      </Badge> */}
                     </div>
                     <p className="text-muted-foreground truncate text-sm">
-                      {meeting.project} • {meeting.attendee}
+                      Project: {meeting.project_id} • Attendees: {meeting.attendees}
                     </p>
                     <div className="mt-2 flex items-center space-x-2">
                       <Clock className="text-muted-foreground h-3 w-3" />
-                      <span className="text-muted-foreground text-xs">{meeting.time}</span>
+                      <span className="text-muted-foreground text-xs">
+                        {meeting.start_time
+                          ? new Date(meeting.start_time).toLocaleString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })
+                          : ''}
+                      </span>
                       <Badge variant="secondary" className={getStatusColor(meeting.status)}>
                         {meeting.status}
                       </Badge>
                     </div>
                   </div>
-                  <ChevronRight className="text-muted-foreground h-4 w-4" />
                 </div>
               ))}
 

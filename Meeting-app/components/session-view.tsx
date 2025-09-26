@@ -89,14 +89,14 @@ export const SessionView = ({
       <div className="bg-card top-0 right-0 left-0 pl-12">
         <div className="px-2 py-6">
           <p className="text-3xl font-bold text-white">{meetingDetails?.title}</p>
-          <p className="text-xl text-gray-400">{meetingDetails?.description}</p>
+          <p className="h-10 text-xl text-gray-400">{meetingDetails?.description}</p>
         </div>
       </div>
-      <div className="flex h-[calc(100%-300px)] gap-10 p-10">
-        <div className="bg-grey-950 bg-card h-full w-3/4 rounded-2xl border border-gray-700 p-10">
+      <div className="flex h-[calc(100%-270px)] gap-10 p-10">
+        <div className="bg-grey-950 bg-card h-full w-3/4 rounded-2xl border p-10">
           <div>{sessionStarted && room && <RenderPresentation />}</div>
         </div>
-        <div className="bg-card h-full w-1/4 min-w-[400px] rounded-2xl border border-gray-700 p-2">
+        <div className="bg-card h-full w-1/4 min-w-[400px] rounded-2xl border p-2">
           <MeetingInfo meetingDetails={meetingDetails} />
           <div className="mx-2 h-[calc(100%-400px)] overflow-auto overflow-x-hidden rounded-2xl border border-gray-700 bg-black">
             <ChatComponent messages={messages} />
@@ -106,6 +106,7 @@ export const SessionView = ({
           </div>
         </div>
       </div>
+
       <MeetingController
         appConfig={appConfig}
         sessionStarted={sessionStarted}

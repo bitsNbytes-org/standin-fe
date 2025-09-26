@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { type ReceivedChatMessage } from '@livekit/components-react';
 import { AgentControlBar } from '@/components/livekit/agent-control-bar/agent-control-bar';
@@ -21,16 +22,32 @@ export const MeetingController = ({
     supportsScreenShare: boolean;
   };
 }) => {
+  const [isVisible, setIsVisible] = useState(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   return (
     <div className="bg-background bottom-0 left-0 z-50 px-3 pt-2 pb-3 md:px-12 md:pb-12">
       <motion.div
         key="control-bar"
         initial={{ opacity: 0, translateY: '100%' }}
         animate={{
-          opacity: sessionStarted ? 1 : 0,
-          translateY: sessionStarted ? '0%' : '100%',
+          opacity: sessionStarted || isVisible ? 1 : 0,
+          translateY: sessionStarted || isVisible ? '0%' : '100%',
         }}
         transition={{ duration: 0.3, delay: sessionStarted ? 0.5 : 0, ease: 'easeOut' }}
+        onMouseMove={() => {
+          // Reset the timer when mouse moves
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          setIsVisible(true);
+
+          timeoutRef.current = setTimeout(() => {
+            setIsVisible(false);
+          }, 3000); // Hide after 3 seconds of inactivity
+        }}
+        style={{
+          opacity: isVisible ? 1 : 0,
+          transition: 'opacity 0.3s ease-in-out',
+        }}
       >
         <div className="relative z-10 mx-auto w-full max-w-2xl">
           {appConfig.isPreConnectBufferEnabled && (

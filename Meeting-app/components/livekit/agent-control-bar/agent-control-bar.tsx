@@ -114,7 +114,7 @@ export function AgentControlBar({
                 pressed={microphoneToggle.enabled}
                 disabled={microphoneToggle.pending}
                 onPressedChange={microphoneToggle.toggle}
-                className="peer/track group/track relative w-auto pr-3 pl-3 md:rounded-r-none md:border-r-0 md:pr-2"
+                className="peer/track group/track border-primary relative w-auto border pr-3 pl-3 text-white md:rounded-r-none md:border-r-0 md:pr-2"
               >
                 <BarVisualizer
                   barCount={3}
@@ -139,7 +139,7 @@ export function AgentControlBar({
                 onMediaDeviceError={onMicrophoneDeviceSelectError}
                 onActiveDeviceChange={handleAudioDeviceChange}
                 className={cn([
-                  'pl-2',
+                  'border-primary border border-l-0',
                   'peer-data-[state=off]/track:text-destructive-foreground',
                   'hover:text-fg1 focus:text-fg1',
                   'hover:peer-data-[state=off]/track:text-destructive-foreground focus:peer-data-[state=off]/track:text-destructive-foreground',
@@ -155,9 +155,10 @@ export function AgentControlBar({
         <Logo />
         {visibleControls.leave && (
           <Button
+            variant="destructive"
             onClick={onLeave}
             disabled={isDisconnecting}
-            className="bg-card border-primary border hover:animate-pulse"
+            className="bg-card border-primary border"
           >
             <PhoneDisconnectIcon weight="bold" className="text-primary" />
             <span className="text-primary hidden md:inline">End Meeting</span>
