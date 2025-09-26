@@ -14,6 +14,7 @@ import {
   Upload,
 } from 'lucide-react';
 import KnowledgeSource from '@/app/components/knowledge-source/knowledge-source';
+import { toastSuccess } from '@/components/alert-toast';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -61,6 +62,20 @@ const timeSlots = [
   '05:00 PM',
   '05:30 PM',
 ];
+
+const durations = [
+  '15 minutes',
+  '30 minutes',
+  '45 minutes',
+  '1 hour',
+  '1 hour 15 minutes',
+  '1 hour 30 minutes',
+  '1 hour 45 minutes',
+  '2 hours',
+  '2 hours 30 minutes',
+  '3 hours',
+];
+
 interface KnowledgeSource {
   id: string;
   type: 'link' | 'content' | 'file';
@@ -82,6 +97,7 @@ export default function ScheduleMeeting() {
   const [selectedProject, setSelectedProject] = useState<string>('');
   const [selectedAttendee, setSelectedAttendee] = useState('');
   const [knowledgeSources, setKnowledgeSources] = useState<KnowledgeSource[]>([]);
+  const [selectedDuration, setSelectedDuration] = useState('');
 
   // Form states for adding new knowledge sources
   const [newLinkUrl, setNewLinkUrl] = useState('');
@@ -149,6 +165,12 @@ export default function ScheduleMeeting() {
     const response = await fetch(`${BASE_URL}/meeting/schedule`, {
       method: 'POST',
       body: formData,
+    });
+
+    toastSuccess({
+      title: 'Meeting scheduled!!',
+      description:
+        'The meeting has been scheduled successfully and an email has been sent to the attendee',
     });
 
     if (!response.ok) {
@@ -246,7 +268,7 @@ export default function ScheduleMeeting() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                   <div className="space-y-2">
                     <Label>Date</Label>
                     <Popover>
@@ -278,6 +300,22 @@ export default function ScheduleMeeting() {
                         {timeSlots.map((time) => (
                           <SelectItem key={time} value={time}>
                             {time}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Duration</Label>
+                    <Select value={selectedDuration} onValueChange={setSelectedDuration} required>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select duration" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {durations.map((duration) => (
+                          <SelectItem key={duration} value={duration} className="w-full">
+                            {duration}
                           </SelectItem>
                         ))}
                       </SelectContent>
